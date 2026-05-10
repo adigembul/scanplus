@@ -148,6 +148,17 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* Tooltip utilities */
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased overflow-x-hidden relative pt-12">
@@ -168,20 +179,37 @@
 
     <!-- Floating Actions (Top Right) -->
     <div id="top-actions" class="fixed top-4 right-4 z-[60] flex items-center gap-3 hidden">
-        <!-- Stats Button (Full Version Only) -->
+        <!-- Admin Dashboard (Superadmin Only) -->
+        <div class="group relative hidden" id="btn-top-admin-container">
+            <button id="btn-top-admin" class="flex items-center justify-center w-11 h-11 bg-slate-800 text-white rounded-full shadow-lg hover:scale-110 hover:bg-slate-900 transition-all" title="Admin Dashboard">
+                <i class="ph ph-users-three text-xl"></i>
+            </button>
+            <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="btn_admin">Manajemen Akun</span>
+        </div>
+
+        <!-- Analytics Dashboard (Superadmin Only) -->
+        <div class="group relative hidden" id="btn-top-analytics-container">
+            <button id="btn-top-analytics" class="flex items-center justify-center w-11 h-11 bg-blue-500 text-white rounded-full shadow-lg hover:scale-110 hover:bg-blue-600 transition-all" title="Analisa Pelanggan">
+                <i class="ph ph-trend-up text-xl"></i>
+            </button>
+            <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="btn_analytics">Analisa Pelanggan</span>
+        </div>
+
+        <!-- Stats Button (Full Version / Admin) -->
         <div class="group relative" id="btn-top-stats-container">
             <button id="btn-top-stats" class="flex items-center justify-center w-11 h-11 bg-indigo-500 text-white rounded-full shadow-lg hover:scale-110 hover:bg-indigo-600 transition-all" title="Statistik QR">
                 <i class="ph ph-chart-bar text-xl"></i>
             </button>
-            <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="btn_stats">Statistik QR</span>
+            <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="btn_stats">Statistik Anda</span>
         </div>
         
-        <div class="group relative">
+        <div class="group relative" id="btn-top-buy-container">
             <button id="btn-top-buy" class="flex items-center justify-center w-11 h-11 bg-amber-400 text-amber-900 rounded-full shadow-lg hover:scale-110 hover:bg-amber-500 transition-all animate-pulse" title="Beli Full Version">
                 <i class="ph ph-crown text-xl"></i>
             </button>
             <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="buy_full">Beli Full Version</span>
         </div>
+        
         <div class="group relative">
             <button id="btn-top-logout" class="flex items-center justify-center w-11 h-11 bg-white text-red-500 rounded-full shadow-md hover:scale-110 hover:bg-red-50 transition-all border border-slate-200" title="Keluar Aplikasi">
                 <i class="ph ph-sign-out text-xl"></i>
@@ -278,6 +306,137 @@
         </div>
     </div>
 
+    <!-- Superadmin Dashboard Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-5xl w-full shadow-2xl relative animate-fade-in max-h-[90vh] flex flex-col">
+            <button id="btn-close-admin" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center"><i class="ph ph-x text-xl"></i></button>
+            
+            <div class="flex items-center gap-4 mb-6 shrink-0 border-b border-slate-100 pb-4">
+                <div class="w-14 h-14 bg-slate-800 text-white rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="ph ph-users-three text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900" data-i18n="admin_title">Manajemen Akun Pengguna</h2>
+                    <p class="text-slate-500 text-sm font-medium" data-i18n="admin_desc">Atur tipe paket, status aktif, dan pengguna baru.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-4 shrink-0">
+                <div class="relative w-64">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-sm focus:border-emerald-500 focus:outline-none" placeholder="Cari pelanggan...">
+                </div>
+                <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md hover:bg-emerald-700 transition-colors" onclick="alert('Fitur Admin: Tambah Akun Baru disimpan (Demo)')"><i class="ph ph-plus mr-1"></i> Tambah Akun</button>
+            </div>
+
+            <div class="flex-1 overflow-hidden flex flex-col border border-slate-200 rounded-xl">
+                <div class="flex-1 overflow-y-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-100 sticky top-0 border-b border-slate-200">
+                            <tr>
+                                <th class="px-5 py-3 font-bold text-slate-600">ID Pengguna / Email</th>
+                                <th class="px-5 py-3 font-bold text-slate-600">Paket Saat Ini</th>
+                                <th class="px-5 py-3 font-bold text-slate-600">Status</th>
+                                <th class="px-5 py-3 font-bold text-slate-600 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                            <!-- Mock Data -->
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-5 py-4"><p class="font-bold text-slate-800">perusahaan_a@gmail.com</p><p class="text-xs text-slate-400">ID: USR-82931</p></td>
+                                <td class="px-5 py-4"><span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border border-amber-200">Premium</span></td>
+                                <td class="px-5 py-4"><span class="text-emerald-600 font-bold text-xs flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> Aktif</span></td>
+                                <td class="px-5 py-4 text-right">
+                                    <button class="text-blue-500 hover:text-blue-700 mx-1" title="Edit"><i class="ph ph-pencil-simple text-lg"></i></button>
+                                    <button class="text-red-500 hover:text-red-700 mx-1" title="Hapus"><i class="ph ph-trash text-lg"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-5 py-4"><p class="font-bold text-slate-800">budi.santoso@yahoo.com</p><p class="text-xs text-slate-400">ID: USR-10294</p></td>
+                                <td class="px-5 py-4"><span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border border-slate-200">Demo</span></td>
+                                <td class="px-5 py-4"><span class="text-emerald-600 font-bold text-xs flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> Aktif</span></td>
+                                <td class="px-5 py-4 text-right">
+                                    <button class="text-blue-500 hover:text-blue-700 mx-1" title="Edit"><i class="ph ph-pencil-simple text-lg"></i></button>
+                                    <button class="text-red-500 hover:text-red-700 mx-1" title="Hapus"><i class="ph ph-trash text-lg"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 bg-slate-50/50">
+                                <td class="px-5 py-4"><p class="font-bold text-slate-800">demo_user_99@mail.com</p><p class="text-xs text-slate-400">ID: USR-49122</p></td>
+                                <td class="px-5 py-4"><span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border border-slate-200">Demo</span></td>
+                                <td class="px-5 py-4"><span class="text-red-500 font-bold text-xs flex items-center gap-1"><i class="ph-fill ph-x-circle"></i> Expired</span></td>
+                                <td class="px-5 py-4 text-right">
+                                    <button class="text-blue-500 hover:text-blue-700 mx-1" title="Edit"><i class="ph ph-pencil-simple text-lg"></i></button>
+                                    <button class="text-red-500 hover:text-red-700 mx-1" title="Hapus"><i class="ph ph-trash text-lg"></i></button>
+                                </td>
+                            </tr>
+                            <!-- /Mock Data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard Modal -->
+    <div id="analytics-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-5xl w-full shadow-2xl relative animate-fade-in max-h-[90vh] flex flex-col">
+            <button id="btn-close-analytics" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center"><i class="ph ph-x text-xl"></i></button>
+            
+            <div class="flex items-center gap-4 mb-6 shrink-0 border-b border-slate-100 pb-4">
+                <div class="w-14 h-14 bg-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="ph ph-trend-up text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900" data-i18n="analytics_title">Analisa Pelanggan & Performa</h2>
+                    <p class="text-slate-500 text-sm font-medium" data-i18n="analytics_desc">Pantau statistik keseluruhan lalu lintas dan pembuatan QR di platform.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 shrink-0">
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Pengguna</p>
+                    <p class="text-3xl font-black text-slate-800">1,204</p>
+                    <p class="text-xs font-bold text-emerald-500 mt-2 flex items-center"><i class="ph ph-trend-up mr-1"></i> +12% bln ini</p>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">QR Dibuat (Global)</p>
+                    <p class="text-3xl font-black text-slate-800">84.5K</p>
+                    <p class="text-xs font-bold text-emerald-500 mt-2 flex items-center"><i class="ph ph-trend-up mr-1"></i> +24% bln ini</p>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Scan (Hit)</p>
+                    <p class="text-3xl font-black text-slate-800">1.2M</p>
+                    <p class="text-xs font-bold text-emerald-500 mt-2 flex items-center"><i class="ph ph-trend-up mr-1"></i> +45% bln ini</p>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Konversi Premium</p>
+                    <p class="text-3xl font-black text-amber-500">18.4%</p>
+                    <p class="text-xs font-bold text-emerald-500 mt-2 flex items-center"><i class="ph ph-trend-up mr-1"></i> +2.1% bln ini</p>
+                </div>
+            </div>
+
+            <!-- Fake Chart Area -->
+            <div class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center relative overflow-hidden">
+                <h3 class="absolute top-4 left-6 text-sm font-bold text-slate-700">Aktivitas Pembuatan QR (30 Hari Terakhir)</h3>
+                <div class="w-full h-full flex items-end justify-between px-4 pt-10 gap-2 opacity-70">
+                    <!-- CSS Bars simulating chart -->
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[40%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[50%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[30%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[70%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[60%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-emerald-400 rounded-t-sm h-[90%] hover:bg-emerald-500 transition-colors relative group">
+                        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded hidden group-hover:block">Puncak!</div>
+                    </div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[45%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[65%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[80%] hover:bg-blue-400 transition-colors"></div>
+                    <div class="w-full bg-blue-200 rounded-t-sm h-[55%] hover:bg-blue-400 transition-colors"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scanner Modal -->
     <div id="scanner-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative animate-fade-in">
@@ -342,7 +501,7 @@
     </div>
 
     <!-- Login Overlay -->
-    <div id="login-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cover bg-center" style="background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=2070');">
+    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-cover bg-center" style="background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=2070');">
         <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 max-w-md w-full shadow-[0_0_40px_rgba(0,0,0,0.3)] border border-white/20 relative mt-8 animate-fade-in">
             <div class="text-center mb-8">
                 <!-- LOGO CUSTOM -->
@@ -751,6 +910,17 @@
                                     <div class="w-full text-emerald-800 text-[8px] font-bold text-center bg-emerald-100 rounded-sm">SCAN ME</div>
                                 </div>
                             </button>
+                            <!-- Additional frames based on user request -->
+                            <button class="frame-tpl-btn min-w-[90px] h-[90px] rounded-2xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-2 transform hover:-translate-y-1 hover:shadow-md" data-tpl="circle">
+                                <div class="w-full h-full border-[3px] border-indigo-600 rounded-full flex flex-col items-center justify-end p-0.5 pb-2">
+                                    <div class="text-indigo-800 text-[6px] font-black text-center">SCAN ME</div>
+                                </div>
+                            </button>
+                            <button class="frame-tpl-btn min-w-[90px] h-[90px] rounded-2xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-2 transform hover:-translate-y-1 hover:shadow-md" data-tpl="box-outline">
+                                <div class="w-full h-full border-b-[6px] border-l-2 border-r-2 border-t-2 border-rose-500 rounded-lg flex flex-col items-center justify-end p-0.5 pb-1 relative">
+                                     <div class="text-white bg-rose-500 w-full text-[6px] font-black text-center absolute bottom-0 rounded-b-sm">SCAN ME</div>
+                                </div>
+                            </button>
                         </div>
                     </div>
 
@@ -828,6 +998,12 @@
         <div class="lg:col-span-5 animate-fade-in delay-200">
             <div id="section-download" class="sticky top-28 bg-white border border-slate-200 rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center min-h-[550px] scroll-mt-28 shadow-xl shadow-slate-200/50">
                 
+                <!-- Section 3 Header inside the Preview Box -->
+                <div class="flex items-center gap-4 w-full mb-8 max-w-[320px] mx-auto border-b border-slate-100 pb-4">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center text-lg font-black shadow-md shrink-0">3</div>
+                    <h2 class="text-xl font-extrabold text-slate-800" data-i18n="step3_title">Sesuaikan & Unduh</h2>
+                </div>
+
                 <!-- Container QR -->
                 <div id="download-container" class="bg-transparent flex flex-col items-center justify-center p-2 mb-8 w-full max-w-[320px]">
                     <div id="qr-frame" class="w-full flex flex-col items-center justify-between transition-all duration-300 relative" style="padding: 0px; border: none; background-color: transparent; border-radius: 0px;">
@@ -1006,6 +1182,29 @@
             let activeFrameTemplate = 'none';
             let uploadedLogoUrl = null;
 
+            // --- AUTO LOGOUT SCRIPT (ON IDLE & TAB CLOSE) ---
+            // Timer di-reset setiap ada aktivitas. Jika inaktif selama 1 Jam, paksa logout.
+            let inactivityTime = function () {
+                let time;
+                window.onload = resetTimer;
+                document.onmousemove = resetTimer;
+                document.onkeydown = resetTimer;
+                document.onclick = resetTimer;
+                document.onscroll = resetTimer;
+
+                function logout() {
+                    sessionStorage.removeItem('scanPlusAuth');
+                    window.location.reload();
+                }
+
+                function resetTimer() {
+                    clearTimeout(time);
+                    time = setTimeout(logout, 3600000);  // 1 jam (3600000 milidetik)
+                }
+            };
+            inactivityTime();
+
+
             // --- OFFLINE CHECKER ---
             const offlineIndicator = document.getElementById('offline-indicator');
             function updateOnlineStatus() {
@@ -1118,7 +1317,7 @@
                     auto_digits: "Format Digit",
                     btn_generate_now: "Buat Sekarang",
                     demo_limit: "Versi Demo dibatasi maksimal 10 kode. Tingkatkan ke Full Version!",
-                    btn_stats: "Statistik QR",
+                    btn_stats: "Statistik Anda",
                     stats_title: "Statistik QR Code",
                     stats_desc: "Pantau aktivitas pembuatan QR Code Anda.",
                     stats_total: "Total QR Dibuat",
@@ -1128,7 +1327,13 @@
                     stats_th_type: "Tipe",
                     stats_th_data: "Data",
                     stats_th_qty: "Jumlah",
-                    stats_clear: "Hapus Riwayat"
+                    stats_clear: "Hapus Riwayat",
+                    btn_admin: "Manajemen Akun",
+                    admin_title: "Manajemen Akun Pengguna",
+                    admin_desc: "Atur tipe paket, status aktif, dan pengguna baru.",
+                    btn_analytics: "Analisa Pelanggan",
+                    analytics_title: "Analisa Pelanggan & Performa",
+                    analytics_desc: "Pantau statistik keseluruhan lalu lintas dan pembuatan QR di platform."
                 },
                 en: {
                     offline_mode: "Offline Mode Active - App is 100% usable.",
@@ -1227,7 +1432,7 @@
                     auto_digits: "Digit Format",
                     btn_generate_now: "Generate Now",
                     demo_limit: "Demo version is limited to 10 codes. Upgrade to Full Version!",
-                    btn_stats: "QR Stats",
+                    btn_stats: "Your Stats",
                     stats_title: "QR Code Statistics",
                     stats_desc: "Monitor your QR Code generation activity.",
                     stats_total: "Total QR Generated",
@@ -1237,7 +1442,13 @@
                     stats_th_type: "Type",
                     stats_th_data: "Data",
                     stats_th_qty: "Quantity",
-                    stats_clear: "Clear History"
+                    stats_clear: "Clear History",
+                    btn_admin: "Account Management",
+                    admin_title: "User Account Management",
+                    admin_desc: "Manage plans, active status, and new users.",
+                    btn_analytics: "Customer Analytics",
+                    analytics_title: "Customer Analytics & Performance",
+                    analytics_desc: "Monitor overall traffic and QR generation statistics on the platform."
                 },
                 zh: {
                     offline_mode: "离线模式已激活 - 应用程序 100% 可用。",
@@ -1336,7 +1547,7 @@
                     auto_digits: "数字格式",
                     btn_generate_now: "立即生成",
                     demo_limit: "演示版本限制最多 10 个代码。 请升级到完整版！",
-                    btn_stats: "统计",
+                    btn_stats: "您的统计",
                     stats_title: "二维码统计",
                     stats_desc: "监控您的二维码生成活动。",
                     stats_total: "生成的总数",
@@ -1346,7 +1557,13 @@
                     stats_th_type: "类型",
                     stats_th_data: "数据",
                     stats_th_qty: "数量",
-                    stats_clear: "清除历史记录"
+                    stats_clear: "清除历史记录",
+                    btn_admin: "账户管理",
+                    admin_title: "用户账户管理",
+                    admin_desc: "管理计划、活动状态和新用户。",
+                    btn_analytics: "客户分析",
+                    analytics_title: "客户分析与性能",
+                    analytics_desc: "监控平台上的整体流量和二维码生成统计信息。"
                 }
             };
 
@@ -1372,7 +1589,7 @@
                     document.querySelector('#download-btn-text [data-i18n]').innerText = dict['btn_dl'];
                 }
 
-                const savedAuth = JSON.parse(localStorage.getItem('scanPlusAuth') || '{}');
+                const savedAuth = JSON.parse(sessionStorage.getItem('scanPlusAuth') || '{}');
                 if (savedAuth.type === 'demo') {
                     const now = new Date().getTime();
                     const daysLeft = Math.ceil((savedAuth.expiry - now) / (1000 * 60 * 60 * 24));
@@ -1380,7 +1597,7 @@
                                      (lang === 'zh') ? `演示版本 (剩余 ${daysLeft} 天)` : 
                                      `Versi Demo (${daysLeft} Hari Tersisa)`;
                     document.getElementById('auth-status-badge').innerText = badgeStr;
-                } else if (savedAuth.type === 'full') {
+                } else if (savedAuth.type === 'full' || savedAuth.type === 'admin') {
                     document.getElementById('auth-status-badge').innerText = dict['badge_full'];
                 }
             }
@@ -1394,6 +1611,8 @@
             const scannerModal = document.getElementById('scanner-modal');
             const autoGenModal = document.getElementById('auto-generate-modal');
             const statsModal = document.getElementById('stats-modal');
+            const adminModal = document.getElementById('admin-modal');
+            const analyticsModal = document.getElementById('analytics-modal');
             
             const pricingTable = document.getElementById('pricing-table');
             const paymentDetails = document.getElementById('payment-details');
@@ -1412,7 +1631,7 @@
                 const toastTitle = document.getElementById('toast-title');
                 const toastDesc = document.getElementById('toast-desc');
                 
-                if (type === 'full') {
+                if (type === 'full' || type === 'admin') {
                     toastIcon.className = "ph ph-check-circle text-emerald-500 text-3xl mt-0.5";
                     toastNotif.classList.replace('border-amber-500', 'border-emerald-500');
                     toastTitle.setAttribute('data-i18n', 'full_title');
@@ -1434,16 +1653,17 @@
             }
 
             function isDemoUser() {
-                const savedAuth = JSON.parse(localStorage.getItem('scanPlusAuth') || '{}');
+                // Now relying on sessionStorage for secure tab-close logout
+                const savedAuth = JSON.parse(sessionStorage.getItem('scanPlusAuth') || '{}');
                 return savedAuth.type === 'demo';
             }
 
             function checkAuth() {
-                const savedAuth = JSON.parse(localStorage.getItem('scanPlusAuth') || '{}');
+                const savedAuth = JSON.parse(sessionStorage.getItem('scanPlusAuth') || '{}');
                 const now = new Date().getTime();
                 const justLoggedIn = sessionStorage.getItem('justLoggedIn');
                 
-                if (savedAuth.type === 'full') {
+                if (savedAuth.type === 'full' || savedAuth.type === 'admin') {
                     loginOverlay.classList.add('hidden');
                     
                     authStatusBadge.classList.remove('hidden', 'bg-amber-100', 'text-amber-800', 'border-amber-200');
@@ -1451,15 +1671,21 @@
                     authStatusBadge.setAttribute('data-i18n', 'badge_full');
                     
                     topActions.classList.remove('hidden');
-                    document.getElementById('btn-top-buy').classList.add('hidden');
+                    document.getElementById('btn-top-buy-container').classList.add('hidden');
                     document.getElementById('scanner-btn-container').classList.remove('hidden'); 
                     document.getElementById('btn-top-stats-container').classList.remove('hidden');
+                    
+                    // Admin Specific Menus
+                    if(savedAuth.type === 'admin') {
+                        document.getElementById('btn-top-admin-container').classList.remove('hidden');
+                        document.getElementById('btn-top-analytics-container').classList.remove('hidden');
+                    }
                     
                     Array.from(dlSelect.options).forEach(opt => opt.disabled = false);
                     autoQtyInput.max = 5000;
                     autoQtyInput.placeholder = "100";
                     
-                    if (justLoggedIn === 'full') {
+                    if (justLoggedIn) {
                         setTimeout(() => showToast('full'), 500);
                         sessionStorage.removeItem('justLoggedIn');
                     }
@@ -1472,9 +1698,13 @@
                     authStatusBadge.removeAttribute('data-i18n'); 
                     
                     topActions.classList.remove('hidden');
-                    document.getElementById('btn-top-buy').classList.remove('hidden');
+                    document.getElementById('btn-top-buy-container').classList.remove('hidden');
                     document.getElementById('scanner-btn-container').classList.add('hidden'); 
                     document.getElementById('btn-top-stats-container').classList.add('hidden');
+                    
+                    // Hide admin menus for demo
+                    document.getElementById('btn-top-admin-container').classList.add('hidden');
+                    document.getElementById('btn-top-analytics-container').classList.add('hidden');
                     
                     const daysLeft = Math.ceil((savedAuth.expiry - now) / (1000 * 60 * 60 * 24));
                     const lang = langSelector.value;
@@ -1507,15 +1737,26 @@
             btnLogin.addEventListener('click', () => {
                 const pw = appPassword.value;
                 const now = new Date().getTime();
+                
+                // Demo
                 if (pw === 'rumahedukasidigital') {
-                    localStorage.setItem('scanPlusAuth', JSON.stringify({ type: 'demo', expiry: now + (3 * 24 * 60 * 60 * 1000) }));
+                    sessionStorage.setItem('scanPlusAuth', JSON.stringify({ type: 'demo', expiry: now + (3 * 24 * 60 * 60 * 1000) }));
                     sessionStorage.setItem('justLoggedIn', 'demo');
                     loginError.classList.add('hidden'); checkAuth();
-                } else if (pw === 'scanplus100%') {
-                    localStorage.setItem('scanPlusAuth', JSON.stringify({ type: 'full' }));
+                } 
+                // Full Version
+                else if (pw === 'scanplus100%') {
+                    sessionStorage.setItem('scanPlusAuth', JSON.stringify({ type: 'full' }));
                     sessionStorage.setItem('justLoggedIn', 'full');
                     loginError.classList.add('hidden'); checkAuth();
-                } else {
+                } 
+                // Superadmin Dashboard
+                else if (pw === 'adminscanplus') {
+                    sessionStorage.setItem('scanPlusAuth', JSON.stringify({ type: 'admin' }));
+                    sessionStorage.setItem('justLoggedIn', 'full');
+                    loginError.classList.add('hidden'); checkAuth();
+                }
+                else {
                     loginError.classList.remove('hidden');
                 }
             });
@@ -1544,8 +1785,14 @@
             document.getElementById('btn-show-tnc').addEventListener('click', () => tncModal.classList.remove('hidden'));
             document.getElementById('btn-close-tnc').addEventListener('click', () => tncModal.classList.add('hidden'));
             
+            document.getElementById('btn-top-admin').addEventListener('click', () => adminModal.classList.remove('hidden'));
+            document.getElementById('btn-close-admin').addEventListener('click', () => adminModal.classList.add('hidden'));
+            
+            document.getElementById('btn-top-analytics').addEventListener('click', () => analyticsModal.classList.remove('hidden'));
+            document.getElementById('btn-close-analytics').addEventListener('click', () => analyticsModal.classList.add('hidden'));
+            
             document.getElementById('btn-top-logout').addEventListener('click', () => {
-                localStorage.removeItem('scanPlusAuth'); window.location.reload();
+                sessionStorage.removeItem('scanPlusAuth'); window.location.reload();
             });
             document.getElementById('btn-close-toast').addEventListener('click', () => {
                 document.getElementById('toast-notif').classList.add('hidden');
@@ -1794,7 +2041,9 @@
                 basic: { frame: { padding: '15px 15px 50px 15px', border: '2px solid #1e293b', backgroundColor: '#ffffff', borderRadius: '8px' }, label: { display: 'block', color: '#1e293b', bottom: '15px', position: 'absolute' }, canvasBg: '#ffffff', showDeco: false },
                 badge: { frame: { padding: '20px 20px 55px 20px', border: 'none', backgroundColor: '#059669', borderRadius: '24px' }, label: { display: 'block', color: '#ffffff', bottom: '15px', position: 'absolute' }, canvasBg: '#ffffff', showDeco: false },
                 polaroid: { frame: { padding: '15px 15px 65px 15px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', borderRadius: '4px' }, label: { display: 'block', color: '#334155', bottom: '20px', position: 'absolute' }, canvasBg: '#f1f5f9', showDeco: true },
-                ticket: { frame: { padding: '20px 20px 60px 20px', border: '2px dashed #059669', backgroundColor: '#ecfdf5', borderRadius: '0px' }, label: { display: 'block', color: '#047857', bottom: '18px', position: 'absolute' }, canvasBg: '#ffffff', showDeco: false }
+                ticket: { frame: { padding: '20px 20px 60px 20px', border: '2px dashed #059669', backgroundColor: '#ecfdf5', borderRadius: '0px' }, label: { display: 'block', color: '#047857', bottom: '18px', position: 'absolute' }, canvasBg: '#ffffff', showDeco: false },
+                circle: { frame: { padding: '15px 15px 50px 15px', border: '3px solid #4f46e5', backgroundColor: '#ffffff', borderRadius: '50%' }, label: { display: 'block', color: '#3730a3', bottom: '15px', position: 'absolute' }, canvasBg: '#ffffff', showDeco: false },
+                box_outline: { frame: { padding: '15px 15px 50px 15px', border: '2px solid #f43f5e', borderBottomWidth: '6px', backgroundColor: '#ffffff', borderRadius: '8px' }, label: { display: 'block', color: '#ffffff', bottom: '0px', width: '100%', backgroundColor: '#f43f5e', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px', padding: '4px 0', position: 'absolute' }, canvasBg: '#ffffff', showDeco: false }
             };
 
             const frameTplBtns = document.querySelectorAll('.frame-tpl-btn');
