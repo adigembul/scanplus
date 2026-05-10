@@ -25,7 +25,7 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
@@ -43,55 +43,63 @@
         
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 6px;
+            height: 8px;
             cursor: pointer;
-            background: #cbd5e1;
+            background: #e2e8f0;
             border-radius: 4px;
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
+            height: 24px;
+            width: 24px;
             border-radius: 50%;
             background: #059669;
             cursor: pointer;
-            margin-top: -7px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-            border: 2px solid #ffffff;
+            margin-top: -8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 3px solid #ffffff;
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
         }
         
         input[type=range]::-moz-range-track {
             width: 100%;
-            height: 6px;
+            height: 8px;
             cursor: pointer;
-            background: #cbd5e1;
+            background: #e2e8f0;
             border-radius: 4px;
         }
         input[type=range]::-moz-range-thumb {
-            height: 20px;
-            width: 20px;
+            height: 24px;
+            width: 24px;
             border-radius: 50%;
             background: #059669;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-            border: 2px solid #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 3px solid #ffffff;
+            transition: transform 0.1s;
+        }
+        input[type=range]::-moz-range-thumb:hover {
+            transform: scale(1.1);
         }
 
         /* Custom Color Picker Styling */
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             cursor: pointer;
             padding: 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch {
             border: 2px solid #e2e8f0;
-            border-radius: 6px;
+            border-radius: 8px;
         }
 
         /* Animations */
@@ -99,10 +107,7 @@
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-            opacity: 0;
-        }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
         .delay-100 { animation-delay: 100ms; }
         .delay-200 { animation-delay: 200ms; }
 
@@ -110,17 +115,20 @@
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        .animate-toast {
-            animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .animate-toast { animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         @keyframes slideDown {
             from { transform: translateY(-100%); }
             to { transform: translateY(0); }
         }
-        .animate-slide-down {
-            animation: slideDown 0.4s ease-out forwards;
+        .animate-slide-down { animation: slideDown 0.4s ease-out forwards; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
+        .animate-float { animation: float 4s ease-in-out infinite; }
 
         @keyframes blob {
             0% { transform: translate(0px, 0px) scale(1); }
@@ -134,18 +142,24 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .promo-gradient {
+            background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased overflow-x-hidden relative pt-12">
 
     <!-- Offline Indicator -->
-    <div id="offline-indicator" class="fixed top-0 left-0 w-full bg-emerald-600 text-white text-xs font-bold text-center py-2 z-[100] hidden animate-slide-down shadow-md">
+    <div id="offline-indicator" class="fixed top-0 left-0 w-full bg-emerald-600 text-white text-sm font-bold text-center py-2 z-[100] hidden animate-slide-down shadow-md">
         <i class="ph ph-wifi-slash mr-1"></i> <span data-i18n="offline_mode">Mode Offline Aktif - Aplikasi 100% tetap bisa digunakan.</span>
     </div>
 
     <!-- Global Floating Language Switcher -->
     <div class="fixed top-4 left-4 z-[60]">
-        <select id="lang-selector" class="bg-white/90 backdrop-blur border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-3 py-2 shadow-sm outline-none cursor-pointer hover:border-emerald-500 transition-colors">
+        <select id="lang-selector" class="bg-white/90 backdrop-blur border border-slate-200 text-slate-700 text-sm font-bold rounded-xl px-4 py-2.5 shadow-sm outline-none cursor-pointer hover:border-emerald-500 transition-colors">
             <option value="id">🇮🇩 Bahasa</option>
             <option value="en">🇬🇧 English</option>
             <option value="zh">🇨🇳 中文</option>
@@ -156,40 +170,40 @@
     <div id="top-actions" class="fixed top-4 right-4 z-[60] flex items-center gap-3 hidden">
         <!-- Stats Button (Full Version Only) -->
         <div class="group relative" id="btn-top-stats-container">
-            <button id="btn-top-stats" class="flex items-center justify-center w-10 h-10 bg-indigo-500 text-white rounded-full shadow-lg hover:scale-110 hover:bg-indigo-600 transition-all" title="Statistik QR">
+            <button id="btn-top-stats" class="flex items-center justify-center w-11 h-11 bg-indigo-500 text-white rounded-full shadow-lg hover:scale-110 hover:bg-indigo-600 transition-all" title="Statistik QR">
                 <i class="ph ph-chart-bar text-xl"></i>
             </button>
-            <span class="absolute top-12 right-0 w-max bg-slate-800 text-white text-xs px-2 py-1 rounded hidden group-hover:block" data-i18n="btn_stats">Statistik QR</span>
+            <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="btn_stats">Statistik QR</span>
         </div>
         
         <div class="group relative">
-            <button id="btn-top-buy" class="flex items-center justify-center w-10 h-10 bg-amber-400 text-amber-900 rounded-full shadow-lg hover:scale-110 hover:bg-amber-500 transition-all animate-pulse" title="Beli Full Version">
+            <button id="btn-top-buy" class="flex items-center justify-center w-11 h-11 bg-amber-400 text-amber-900 rounded-full shadow-lg hover:scale-110 hover:bg-amber-500 transition-all animate-pulse" title="Beli Full Version">
                 <i class="ph ph-crown text-xl"></i>
             </button>
-            <span class="absolute top-12 right-0 w-max bg-slate-800 text-white text-xs px-2 py-1 rounded hidden group-hover:block" data-i18n="buy_full">Beli Full Version</span>
+            <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="buy_full">Beli Full Version</span>
         </div>
         <div class="group relative">
-            <button id="btn-top-logout" class="flex items-center justify-center w-10 h-10 bg-white text-red-500 rounded-full shadow-md hover:scale-110 hover:bg-red-50 transition-all border border-slate-200" title="Keluar Aplikasi">
+            <button id="btn-top-logout" class="flex items-center justify-center w-11 h-11 bg-white text-red-500 rounded-full shadow-md hover:scale-110 hover:bg-red-50 transition-all border border-slate-200" title="Keluar Aplikasi">
                 <i class="ph ph-sign-out text-xl"></i>
             </button>
-            <span class="absolute top-12 right-0 w-max bg-slate-800 text-white text-xs px-2 py-1 rounded hidden group-hover:block" data-i18n="logout">Keluar</span>
+            <span class="absolute top-14 right-0 w-max bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hidden group-hover:block font-medium" data-i18n="logout">Keluar</span>
         </div>
     </div>
 
     <!-- Floating Action (Bottom Left) T&C -->
-    <div class="fixed bottom-4 left-4 z-[60]">
-        <button id="btn-show-tnc" class="flex items-center justify-center w-10 h-10 bg-white text-slate-500 rounded-full shadow-md hover:scale-110 hover:text-emerald-600 transition-all border border-slate-200" title="Terms & Conditions">
-            <i class="ph ph-shield-check text-xl"></i>
+    <div class="fixed bottom-6 left-6 z-[60]">
+        <button id="btn-show-tnc" class="flex items-center justify-center w-12 h-12 bg-white text-slate-500 rounded-full shadow-lg hover:scale-110 hover:text-emerald-600 transition-all border border-slate-200" title="Terms & Conditions">
+            <i class="ph ph-shield-check text-2xl"></i>
         </button>
     </div>
 
     <!-- Floating Actions (Bottom Right) WA & Scroll Top -->
     <div class="fixed bottom-6 right-6 z-[60] flex flex-col items-center gap-3">
-        <button id="btn-scroll-top" class="w-10 h-10 md:w-12 md:h-12 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-slate-700 transition-all opacity-0 translate-y-10 pointer-events-none duration-300">
-            <i class="ph ph-caret-up text-xl md:text-2xl"></i>
+        <button id="btn-scroll-top" class="w-12 h-12 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-slate-700 transition-all opacity-0 translate-y-10 pointer-events-none duration-300">
+            <i class="ph ph-caret-up text-2xl"></i>
         </button>
-        <a href="https://wa.me/6287882891567" target="_blank" class="w-12 h-12 md:w-14 md:h-14 bg-green-500 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-600 transition-all animate-bounce" title="Chat WhatsApp">
-            <i class="ph ph-whatsapp-logo text-3xl md:text-4xl"></i>
+        <a href="https://wa.me/6287882891567" target="_blank" class="w-14 h-14 bg-green-500 text-white rounded-full shadow-lg shadow-green-500/30 flex items-center justify-center hover:bg-green-600 transition-all animate-bounce" title="Chat WhatsApp">
+            <i class="ph ph-whatsapp-logo text-4xl"></i>
         </a>
     </div>
 
@@ -198,13 +212,13 @@
         <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative animate-fade-in">
             <button id="btn-close-tnc" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="ph ph-x text-2xl"></i></button>
             <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="ph ph-warning-circle text-3xl"></i>
+                <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <i class="ph ph-warning-circle text-4xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-slate-900 mb-2" data-i18n="tnc_title">Terms & Conditions</h2>
             </div>
-            <div class="bg-red-50 rounded-xl p-5 border border-red-100 text-center">
-                <p class="font-semibold text-red-600 leading-relaxed" data-i18n="tnc_desc">Dilarang menjual dan mengubah isi code tanpa persetujuan Rumah Edukasi Digital.</p>
+            <div class="bg-red-50 rounded-2xl p-6 border border-red-100 text-center shadow-inner">
+                <p class="font-semibold text-red-600 leading-relaxed text-sm" data-i18n="tnc_desc">Dilarang menjual dan mengubah isi code tanpa persetujuan Rumah Edukasi Digital.</p>
             </div>
         </div>
     </div>
@@ -295,8 +309,8 @@
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative animate-fade-in">
             <button id="btn-close-auto" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center"><i class="ph ph-x text-xl"></i></button>
             <div class="text-center mb-6">
-                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="ph ph-magic-wand text-2xl"></i>
+                <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="ph ph-magic-wand text-3xl"></i>
                 </div>
                 <h2 class="text-xl font-bold text-slate-900" data-i18n="auto_modal_title">Pengaturan Auto Generate</h2>
             </div>
@@ -322,45 +336,45 @@
                         </select>
                     </div>
                 </div>
-                <button id="btn-execute-auto" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-lg shadow-amber-500/30 mt-2 text-sm" data-i18n="btn_generate_now">Buat Sekarang</button>
+                <button id="btn-execute-auto" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-4 rounded-xl transition-colors shadow-lg shadow-amber-500/30 mt-4 text-sm" data-i18n="btn_generate_now">Buat Sekarang</button>
             </div>
         </div>
     </div>
 
     <!-- Login Overlay -->
     <div id="login-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cover bg-center" style="background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=2070');">
-        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 max-w-md w-full shadow-[0_0_40px_rgba(0,0,0,0.3)] border border-white/20 relative mt-8">
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 max-w-md w-full shadow-[0_0_40px_rgba(0,0,0,0.3)] border border-white/20 relative mt-8 animate-fade-in">
             <div class="text-center mb-8">
                 <!-- LOGO CUSTOM -->
-                <img src="logo.png" alt="Scan Plus Logo" class="h-16 mx-auto mb-4 object-contain drop-shadow-sm" onerror="this.src='https://dummyimage.com/200x80/059669/ffffff.png&text=Scan+Plus';">
+                <img src="logo.png" alt="Scan Plus Logo" class="h-20 mx-auto mb-4 object-contain drop-shadow-sm" onerror="this.src='https://dummyimage.com/200x80/059669/ffffff.png&text=Scan+Plus';">
                 
                 <h2 class="sr-only" data-i18n="login_title">Scan Plus Login</h2>
                 <p class="text-slate-500 text-sm font-medium" data-i18n="login_desc">Silakan masukkan password untuk mengakses aplikasi.</p>
             </div>
             <div class="space-y-4">
                 <div class="relative">
-                    <input type="password" id="app-password" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-center pr-12 bg-white/80" placeholder="Masukkan Password" data-i18n-ph="login_ph">
+                    <input type="password" id="app-password" class="w-full px-4 py-4 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-center pr-12 bg-white/80 font-medium" placeholder="Masukkan Password" data-i18n-ph="login_ph">
                     <button id="btn-toggle-password" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-emerald-600 transition-colors">
-                        <i class="ph ph-eye text-xl" id="icon-toggle-password"></i>
+                        <i class="ph ph-eye text-2xl" id="icon-toggle-password"></i>
                     </button>
                 </div>
-                <button id="btn-login" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-emerald-600/30" data-i18n="btn_login">
+                <button id="btn-login" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-4 rounded-xl transition-colors shadow-lg shadow-emerald-600/30 text-lg" data-i18n="btn_login">
                     Masuk
                 </button>
-                <div class="text-center mt-4 flex items-center justify-center gap-4">
+                <div class="text-center mt-5 flex items-center justify-center gap-4">
                     <button id="btn-show-buy" class="text-sm text-amber-600 hover:text-amber-700 hover:underline font-bold" data-i18n="buy_full">Beli Versi Full</button>
                 </div>
-                <div id="login-error" class="text-red-500 text-sm text-center hidden mt-2 bg-red-50 py-2 rounded-lg border border-red-100 font-medium" data-i18n="login_err">Password salah!</div>
+                <div id="login-error" class="text-red-500 text-sm text-center hidden mt-2 bg-red-50 py-3 rounded-xl border border-red-100 font-bold" data-i18n="login_err">Password salah!</div>
             </div>
             
             <div class="mt-8 pt-6 border-t border-slate-200/60 text-center">
-                <p class="text-xs text-slate-500 font-bold mb-3">&copy; 2026 Scan Plus. Rumah Edukasi Digital.</p>
+                <p class="text-xs text-slate-500 font-bold mb-4">&copy; 2026 Scan Plus. Rumah Edukasi Digital.</p>
                 <!-- Social Media Icons in Login -->
-                <div class="flex justify-center gap-4 text-slate-400">
-                    <a href="#" class="hover:text-pink-500 transition-colors transform hover:scale-110" title="Instagram"><i class="ph ph-instagram-logo text-xl"></i></a>
-                    <a href="#" class="hover:text-red-500 transition-colors transform hover:scale-110" title="YouTube"><i class="ph ph-youtube-logo text-xl"></i></a>
-                    <a href="#" class="hover:text-black transition-colors transform hover:scale-110" title="TikTok"><i class="ph ph-tiktok-logo text-xl"></i></a>
-                    <a href="#" class="hover:text-blue-600 transition-colors transform hover:scale-110" title="Facebook"><i class="ph ph-facebook-logo text-xl"></i></a>
+                <div class="flex justify-center gap-5 text-slate-400">
+                    <a href="#" class="hover:text-pink-500 transition-colors transform hover:scale-110" title="Instagram"><i class="ph ph-instagram-logo text-2xl"></i></a>
+                    <a href="#" class="hover:text-red-500 transition-colors transform hover:scale-110" title="YouTube"><i class="ph ph-youtube-logo text-2xl"></i></a>
+                    <a href="#" class="hover:text-black transition-colors transform hover:scale-110" title="TikTok"><i class="ph ph-tiktok-logo text-2xl"></i></a>
+                    <a href="#" class="hover:text-blue-600 transition-colors transform hover:scale-110" title="Facebook"><i class="ph ph-facebook-logo text-2xl"></i></a>
                 </div>
             </div>
         </div>
@@ -369,74 +383,74 @@
     <!-- Pricing/Buy Modal (Gold Theme for Premium) -->
     <div id="payment-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden overflow-y-auto pt-20 pb-10">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-4xl w-full shadow-2xl relative my-auto animate-fade-in">
-            <button id="btn-close-buy" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center"><i class="ph ph-x text-xl"></i></button>
+            <button id="btn-close-buy" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-10 h-10 flex items-center justify-center"><i class="ph ph-x text-2xl"></i></button>
             
             <div class="text-center mb-8">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2" data-i18n="pricing_title">Pilih paket terbaik untuk Anda</h2>
-                <p class="text-slate-500 text-sm" data-i18n="pricing_subtitle">Tingkatkan aplikasi Anda untuk membuka fitur tanpa batas.</p>
+                <h2 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-3" data-i18n="pricing_title">Pilih paket terbaik untuk Anda</h2>
+                <p class="text-slate-500 text-sm md:text-base font-medium" data-i18n="pricing_subtitle">Tingkatkan aplikasi Anda untuk membuka fitur tanpa batas.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto" id="pricing-table">
                 <!-- Paket Gratis -->
-                <div class="border border-slate-200 rounded-2xl p-6 text-center hover:shadow-md transition-shadow bg-slate-50 flex flex-col h-full">
+                <div class="border border-slate-200 rounded-3xl p-8 text-center hover:shadow-md transition-shadow bg-slate-50 flex flex-col h-full">
                     <h3 class="text-xl font-bold text-slate-700" data-i18n="pricing_free">Gratis</h3>
                     <div class="my-6">
-                        <span class="text-4xl font-extrabold text-slate-900">Rp0</span>
-                        <span class="text-sm text-slate-500 block mt-1" data-i18n="pricing_free_desc">Selamanya bebas</span>
+                        <span class="text-5xl font-extrabold text-slate-900">Rp0</span>
+                        <span class="text-sm text-slate-500 block mt-2 font-medium" data-i18n="pricing_free_desc">Selamanya bebas</span>
                     </div>
-                    <ul class="text-sm text-slate-600 space-y-4 mb-8 text-left flex-1">
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-emerald-500 text-lg"></i> <span data-i18n="feat_limit1">Maksimal 10 Kode QR (Mode Bulk)</span></li>
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-emerald-500 text-lg"></i> <span data-i18n="feat_res1">Resolusi Standar (JPG Saja)</span></li>
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-emerald-500 text-lg"></i> <span data-i18n="feat_logo1">Bebas Watermark</span></li>
-                        <li class="flex items-center gap-3 text-slate-400"><i class="ph ph-x-circle text-slate-300 text-lg"></i> <span data-i18n="feat_svg1">Tanpa Format SVG & PNG</span></li>
-                        <li class="flex items-center gap-3 text-slate-400"><i class="ph ph-x-circle text-slate-300 text-lg"></i> <span data-i18n="feat_support1">Tanpa Prioritas Dukungan & Statistik</span></li>
+                    <ul class="text-sm text-slate-600 space-y-5 mb-8 text-left flex-1 font-medium">
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-emerald-500 text-xl"></i> <span data-i18n="feat_limit1">Maksimal 10 Kode QR (Mode Bulk)</span></li>
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-emerald-500 text-xl"></i> <span data-i18n="feat_res1">Resolusi Standar (JPG Saja)</span></li>
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-emerald-500 text-xl"></i> <span data-i18n="feat_logo1">Bebas Watermark</span></li>
+                        <li class="flex items-center gap-3 text-slate-400"><i class="ph ph-x-circle text-slate-300 text-xl"></i> <span data-i18n="feat_svg1">Tanpa Format SVG & PNG</span></li>
+                        <li class="flex items-center gap-3 text-slate-400"><i class="ph ph-x-circle text-slate-300 text-xl"></i> <span data-i18n="feat_support1">Tanpa Prioritas Dukungan & Statistik</span></li>
                     </ul>
-                    <button class="w-full py-3 bg-white border-2 border-slate-200 text-slate-500 font-bold rounded-xl cursor-not-allowed uppercase text-sm" data-i18n="btn_current_plan">Paket Saat Ini</button>
+                    <button class="w-full py-4 bg-white border-2 border-slate-200 text-slate-500 font-bold rounded-xl cursor-not-allowed uppercase text-sm" data-i18n="btn_current_plan">Paket Saat Ini</button>
                 </div>
 
                 <!-- Paket Full Version -->
-                <div class="border-2 border-amber-500 rounded-2xl p-6 text-center relative shadow-xl bg-white flex flex-col h-full transform md:-translate-y-2">
-                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[11px] font-bold px-4 py-1 rounded-full uppercase tracking-wider shadow-sm" data-i18n="badge_populer">Rekomendasi</div>
+                <div class="border-2 border-amber-500 rounded-3xl p-8 text-center relative shadow-xl bg-white flex flex-col h-full transform md:-translate-y-3">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-xs font-bold px-5 py-1.5 rounded-full uppercase tracking-wider shadow-md" data-i18n="badge_populer">Rekomendasi</div>
                     <h3 class="text-xl font-bold text-amber-600" data-i18n="pricing_full">Premium / Full Version</h3>
                     <div class="my-6">
-                        <span class="text-4xl font-extrabold text-slate-900">Rp49.000</span>
-                        <span class="text-sm text-slate-500 block mt-1" data-i18n="pricing_pay_once">Sekali Bayar / Selamanya</span>
+                        <span class="text-5xl font-extrabold text-slate-900">Rp49.000</span>
+                        <span class="text-sm text-slate-500 block mt-2 font-medium" data-i18n="pricing_pay_once">Sekali Bayar / Selamanya</span>
                     </div>
-                    <ul class="text-sm text-slate-700 space-y-4 mb-8 text-left font-medium flex-1">
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-lg"></i> <span data-i18n="feat_limit2">Tak Terbatas (Unlimited) Kode QR</span></li>
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-lg"></i> <span data-i18n="feat_res2">Resolusi Tinggi (HD) & Format Lengkap</span></li>
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-lg"></i> <span data-i18n="feat_logo2">Fitur Scanner Kamera QR Code</span></li>
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-lg"></i> <span data-i18n="feat_svg2">Fitur Dashboard Statistik Pembuatan QR</span></li>
-                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-lg"></i> <span data-i18n="feat_support2">Dukungan Prioritas 24/7</span></li>
+                    <ul class="text-sm text-slate-700 space-y-5 mb-8 text-left font-semibold flex-1">
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-xl"></i> <span data-i18n="feat_limit2">Tak Terbatas (Unlimited) Kode QR</span></li>
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-xl"></i> <span data-i18n="feat_res2">Resolusi Tinggi (HD) & Format Lengkap</span></li>
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-xl"></i> <span data-i18n="feat_logo2">Fitur Scanner Kamera QR Code</span></li>
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-xl"></i> <span data-i18n="feat_svg2">Fitur Dashboard Statistik Pembuatan QR</span></li>
+                        <li class="flex items-center gap-3"><i class="ph ph-check-circle text-amber-500 text-xl"></i> <span data-i18n="feat_support2">Dukungan Prioritas 24/7</span></li>
                     </ul>
-                    <button id="btn-proceed-buy" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors uppercase text-sm shadow-lg shadow-amber-500/30" data-i18n="btn_upgrade">Tingkatkan Sekarang</button>
+                    <button id="btn-proceed-buy" class="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors uppercase text-sm shadow-lg shadow-amber-500/30" data-i18n="btn_upgrade">Tingkatkan Sekarang</button>
                 </div>
             </div>
 
             <div id="payment-details" class="hidden mt-8 pt-8 border-t border-slate-200">
                 <div class="text-center mb-6">
-                    <h3 class="text-xl font-bold text-slate-800" data-i18n="payment_title">Selesaikan Pembayaran</h3>
-                    <p class="text-slate-500 text-sm" data-i18n="payment_subtitle">Pilih metode pembayaran di bawah ini untuk Full Version (Rp49.000)</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2" data-i18n="payment_title">Selesaikan Pembayaran</h3>
+                    <p class="text-slate-500 text-sm font-medium" data-i18n="payment_subtitle">Pilih metode pembayaran di bawah ini untuk Full Version (Rp49.000)</p>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 max-w-2xl mx-auto">
-                    <div class="flex-1 bg-slate-50 rounded-xl p-5 border border-slate-200 text-center">
-                        <p class="text-xs text-slate-400 font-bold uppercase mb-2" data-i18n="transfer_bank">Transfer Bank</p>
-                        <i class="ph ph-bank text-3xl text-slate-400 mb-2"></i>
-                        <p class="font-bold text-lg text-slate-800">BCA 1234 5678 90</p>
-                        <p class="text-sm text-slate-600">a.n Rumah Edukasi Digital</p>
+                    <div class="flex-1 bg-slate-50 rounded-2xl p-6 border border-slate-200 text-center shadow-sm">
+                        <p class="text-sm text-slate-400 font-bold uppercase mb-3" data-i18n="transfer_bank">Transfer Bank</p>
+                        <i class="ph ph-bank text-4xl text-slate-400 mb-3"></i>
+                        <p class="font-extrabold text-xl text-slate-800">BCA 1234 5678 90</p>
+                        <p class="text-sm text-slate-600 font-medium">a.n Rumah Edukasi Digital</p>
                     </div>
-                    <div class="flex-1 bg-slate-50 rounded-xl p-5 border border-slate-200 text-center">
-                        <p class="text-xs text-slate-400 font-bold uppercase mb-2" data-i18n="or_qris">Atau via QRIS</p>
-                        <div class="w-32 h-32 bg-white mx-auto rounded-xl flex items-center justify-center text-slate-400 text-sm border-2 border-slate-200 shadow-sm overflow-hidden">
+                    <div class="flex-1 bg-slate-50 rounded-2xl p-6 border border-slate-200 text-center shadow-sm">
+                        <p class="text-sm text-slate-400 font-bold uppercase mb-3" data-i18n="or_qris">Atau via QRIS</p>
+                        <div class="w-36 h-36 bg-white mx-auto rounded-xl flex items-center justify-center text-slate-400 text-sm border-2 border-slate-200 shadow-md overflow-hidden p-2">
                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=QRIS_DUMMY_PAYMENT" alt="QRIS" class="w-full h-full object-cover">
                         </div>
                     </div>
                 </div>
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-amber-600 font-semibold bg-amber-50 inline-block px-4 py-2 rounded-lg border border-amber-100" data-i18n="buy_note">Kirim bukti transfer ke WhatsApp admin untuk mendapatkan password Full Version.</p>
+                <div class="mt-8 text-center">
+                    <p class="text-sm text-amber-700 font-bold bg-amber-50 inline-block px-5 py-3 rounded-xl border border-amber-200 shadow-sm" data-i18n="buy_note">Kirim bukti transfer ke WhatsApp admin untuk mendapatkan password Full Version.</p>
                 </div>
                 <div class="mt-6 text-center">
-                    <button id="btn-back-pricing" class="text-sm text-slate-500 hover:text-slate-700 underline font-medium" data-i18n="btn_back">Kembali</button>
+                    <button id="btn-back-pricing" class="text-sm text-slate-500 hover:text-slate-800 underline font-bold" data-i18n="btn_back">Kembali</button>
                 </div>
             </div>
 
@@ -444,82 +458,86 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast-notif" class="fixed bottom-24 right-6 z-[70] bg-white rounded-xl shadow-2xl border-l-4 p-4 max-w-sm hidden flex items-start gap-3 border-amber-500">
-        <i id="toast-icon" class="ph ph-info text-amber-500 text-2xl mt-0.5"></i>
+    <div id="toast-notif" class="fixed bottom-24 right-6 z-[70] bg-white rounded-2xl shadow-2xl border-l-4 p-5 max-w-sm hidden flex items-start gap-4 border-amber-500">
+        <i id="toast-icon" class="ph ph-info text-amber-500 text-3xl mt-0.5"></i>
         <div>
-            <h4 id="toast-title" class="font-bold text-slate-800 text-sm" data-i18n="demo_title">Versi Demo</h4>
-            <p id="toast-desc" class="text-xs text-slate-500 mt-1" data-i18n="demo_desc">Anda menggunakan versi Demo. Beli Full Version untuk akses fitur tanpa batas!</p>
+            <h4 id="toast-title" class="font-extrabold text-slate-800 text-base" data-i18n="demo_title">Versi Demo</h4>
+            <p id="toast-desc" class="text-sm text-slate-500 mt-1 font-medium" data-i18n="demo_desc">Anda menggunakan versi Demo. Beli Full Version untuk akses fitur tanpa batas!</p>
         </div>
-        <button id="btn-close-toast" class="text-slate-400 hover:text-slate-700 ml-auto"><i class="ph ph-x"></i></button>
+        <button id="btn-close-toast" class="text-slate-400 hover:text-slate-700 ml-auto"><i class="ph ph-x text-xl"></i></button>
     </div>
 
-    <!-- Header -->
-    <header class="text-center pt-12 pb-8 px-4 bg-white border-b border-slate-100 relative overflow-hidden">
-        <div class="absolute -top-24 -left-24 w-64 h-64 bg-emerald-50 rounded-full blur-3xl opacity-50 z-0"></div>
-        <div class="absolute top-10 right-10 w-32 h-32 bg-emerald-100 rounded-full blur-2xl opacity-50 z-0"></div>
+    <!-- LANDING PAGE HERO / HEADER -->
+    <header class="text-center pt-16 pb-12 px-4 bg-white border-b border-slate-100 relative overflow-hidden">
+        <!-- Decoration Orbs -->
+        <div class="absolute -top-24 -left-24 w-80 h-80 bg-emerald-100 rounded-full blur-3xl opacity-50 z-0"></div>
+        <div class="absolute top-10 right-10 w-48 h-48 bg-blue-100 rounded-full blur-2xl opacity-50 z-0"></div>
+        <div class="absolute -bottom-10 left-1/2 w-64 h-64 bg-fuchsia-50 rounded-full blur-3xl opacity-60 z-0 transform -translate-x-1/2"></div>
         
-        <div class="relative z-10 flex flex-col items-center">
+        <div class="relative z-10 flex flex-col items-center max-w-4xl mx-auto">
             <!-- LOGO CUSTOM HEADER -->
-            <img src="logo.png" alt="Scan Plus Logo" class="h-16 md:h-20 mx-auto mb-5 object-contain" onerror="this.src='https://dummyimage.com/300x100/059669/ffffff.png&text=Scan+Plus';">
-            <h1 class="sr-only" data-i18n="app_title">Scan Plus - Code Generator</h1>
-            <p class="text-slate-600 max-w-2xl mx-auto text-sm md:text-base font-medium" data-i18n="app_subtitle">Kustomisasi QR Code dengan bingkai, teks, dan logo profesional. Support Bulk 1000+ QR.</p>
-            <div id="auth-status-badge" class="mt-4 inline-block px-4 py-1.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full hidden border border-amber-200 shadow-sm" data-i18n="badge_demo">Demo Version</div>
+            <img src="logo.png" alt="Scan Plus Logo" class="h-20 md:h-28 mx-auto mb-6 object-contain drop-shadow-md hover:scale-105 transition-transform" onerror="this.src='https://dummyimage.com/400x120/059669/ffffff.png&text=Scan+Plus';">
+            
+            <h1 class="text-3xl md:text-5xl font-black text-slate-900 mb-4 promo-gradient tracking-tight" data-i18n="app_title">Tingkatkan Interaksi dengan QR Code Premium!</h1>
+            <p class="text-slate-600 max-w-2xl mx-auto text-base md:text-lg font-medium leading-relaxed" data-i18n="app_subtitle">Kustomisasi QR Code Anda dengan bingkai, teks, dan logo profesional. Support pembuatan ribuan (Bulk 1000+) QR secara instan dan 100% Offline.</p>
+            
+            <div id="auth-status-badge" class="mt-6 inline-block px-5 py-2 bg-amber-100 text-amber-800 text-sm font-extrabold rounded-full hidden border border-amber-200 shadow-sm" data-i18n="badge_demo">Demo Version</div>
         </div>
     </header>
 
     <!-- LANDING PAGE SECTION: How it works (Steps) -->
-    <section class="bg-slate-50 py-12 border-b border-slate-200">
+    <section class="bg-slate-50 py-16 border-b border-slate-200">
         <div class="max-w-5xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                 
                 <!-- Step 1 -->
-                <a href="#section-content" class="block border border-slate-200 rounded-2xl p-6 text-center hover:shadow-lg hover:border-emerald-300 transition-all bg-white group cursor-pointer">
-                    <div class="w-full h-32 md:h-40 bg-slate-50 rounded-xl mb-4 md:mb-6 flex items-center justify-center overflow-hidden relative">
-                        <div class="w-32 h-24 border-2 border-slate-300 rounded-lg bg-white shadow-sm flex flex-col group-hover:scale-105 transition-transform">
-                            <div class="h-4 border-b-2 border-slate-200 flex items-center px-1 gap-1">
-                                <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                <a href="#section-content" class="block border border-slate-200 rounded-3xl p-8 text-center hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1 transition-all bg-white group cursor-pointer">
+                    <div class="w-full h-32 md:h-48 bg-slate-50 rounded-2xl mb-6 flex items-center justify-center overflow-hidden relative shadow-inner">
+                        <div class="w-36 h-28 border-2 border-slate-300 rounded-xl bg-white shadow-md flex flex-col group-hover:scale-110 transition-transform duration-300">
+                            <div class="h-5 border-b-2 border-slate-200 flex items-center px-2 gap-1.5 bg-slate-50 rounded-t-lg">
+                                <div class="w-2 h-2 rounded-full bg-slate-300"></div><div class="w-2 h-2 rounded-full bg-slate-300"></div>
                             </div>
                             <div class="flex-1 flex items-center justify-center text-emerald-500">
-                                <i class="ph ph-layout text-4xl"></i>
+                                <i class="ph ph-layout text-5xl"></i>
                             </div>
                         </div>
                     </div>
-                    <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded mb-3 uppercase tracking-wider" data-i18n="step1_tag">Langkah 1</span>
-                    <h3 class="text-base md:text-lg font-bold text-slate-800" data-i18n="step1_title">Pilih Konten</h3>
+                    <span class="inline-block px-4 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg mb-4 uppercase tracking-widest border border-emerald-100" data-i18n="step1_tag">Langkah 1</span>
+                    <h3 class="text-lg md:text-xl font-extrabold text-slate-800" data-i18n="step1_title">Pilih Konten</h3>
                 </a>
 
                 <!-- Step 2 -->
-                <a href="#section-design" class="block border border-slate-200 rounded-2xl p-6 text-center hover:shadow-lg hover:border-emerald-300 transition-all bg-white group cursor-pointer">
-                    <div class="w-full h-32 md:h-40 bg-slate-50 rounded-xl mb-4 md:mb-6 flex items-center justify-center overflow-hidden relative">
-                        <div class="w-32 h-24 border-2 border-slate-800 rounded-lg bg-white shadow-sm flex flex-col group-hover:scale-105 transition-transform">
-                            <div class="h-4 border-b-2 border-slate-800 bg-slate-800 flex items-center px-1 gap-1">
-                                <div class="w-1.5 h-1.5 rounded-full bg-white opacity-50"></div>
+                <a href="#section-design" class="block border border-slate-200 rounded-3xl p-8 text-center hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1 transition-all bg-white group cursor-pointer">
+                    <div class="w-full h-32 md:h-48 bg-slate-50 rounded-2xl mb-6 flex items-center justify-center overflow-hidden relative shadow-inner">
+                        <div class="w-36 h-28 border-2 border-slate-800 rounded-xl bg-white shadow-md flex flex-col group-hover:scale-110 transition-transform duration-300">
+                            <div class="h-5 border-b-2 border-slate-800 bg-slate-800 flex items-center px-2 gap-1.5 rounded-t-lg">
+                                <div class="w-2 h-2 rounded-full bg-white/50"></div>
                             </div>
-                            <div class="flex-1 flex flex-col items-center justify-center p-2 gap-2">
-                                <div class="w-full h-4 bg-slate-100 rounded text-[6px] text-slate-400 flex items-center px-1">https://...</div>
-                                <div class="w-full h-6 bg-emerald-600 rounded text-[8px] text-white flex items-center justify-center font-bold">GENERATE</div>
+                            <div class="flex-1 flex flex-col items-center justify-center p-3 gap-3">
+                                <div class="w-full h-5 bg-slate-100 rounded-md text-[8px] text-slate-400 flex items-center px-2 border border-slate-200">https://...</div>
+                                <div class="w-full h-8 bg-emerald-600 rounded-md text-[10px] text-white flex items-center justify-center font-bold shadow-sm">GENERATE</div>
                             </div>
                         </div>
                     </div>
-                    <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded mb-3 uppercase tracking-wider" data-i18n="step2_tag">Langkah 2</span>
-                    <h3 class="text-base md:text-lg font-bold text-slate-800" data-i18n="step2_title">Desain QR Code</h3>
+                    <span class="inline-block px-4 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg mb-4 uppercase tracking-widest border border-emerald-100" data-i18n="step2_tag">Langkah 2</span>
+                    <h3 class="text-lg md:text-xl font-extrabold text-slate-800" data-i18n="step2_title">Desain QR Code</h3>
                 </a>
 
                 <!-- Step 3 -->
-                <a href="#section-download" class="block border border-slate-200 rounded-2xl p-6 text-center hover:shadow-lg hover:border-emerald-300 transition-all bg-white group cursor-pointer">
-                    <div class="w-full h-32 md:h-40 bg-slate-50 rounded-xl mb-4 md:mb-6 flex items-center justify-center overflow-hidden relative">
-                        <div class="w-24 h-32 bg-emerald-600 rounded-2xl shadow-sm flex flex-col items-center justify-start p-2 group-hover:-translate-y-2 transition-transform">
-                            <div class="w-20 h-20 bg-white rounded-xl flex items-center justify-center mb-1">
-                                <i class="ph ph-qr-code text-4xl text-slate-800"></i>
+                <a href="#section-download" class="block border border-slate-200 rounded-3xl p-8 text-center hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1 transition-all bg-white group cursor-pointer">
+                    <div class="w-full h-32 md:h-48 bg-slate-50 rounded-2xl mb-6 flex items-center justify-center overflow-hidden relative shadow-inner">
+                        <div class="w-28 h-36 bg-emerald-600 rounded-2xl shadow-lg flex flex-col items-center justify-start p-3 group-hover:-translate-y-3 transition-transform duration-300 border-2 border-emerald-500">
+                            <div class="w-full aspect-square bg-white rounded-xl flex items-center justify-center mb-1.5 shadow-sm">
+                                <i class="ph ph-qr-code text-5xl text-slate-800"></i>
                             </div>
-                            <div class="text-[8px] text-white font-bold mb-1">SCAN ME</div>
-                            <div class="w-16 h-6 bg-slate-800 rounded flex items-center justify-center text-white mt-auto border border-slate-700 shadow-md">
-                                <i class="ph ph-download-simple text-sm"></i>
+                            <div class="text-[10px] text-white font-extrabold mb-1.5 tracking-wider">SCAN ME</div>
+                            <div class="w-full h-8 bg-slate-800 rounded-lg flex items-center justify-center text-white mt-auto border border-slate-700 shadow-md">
+                                <i class="ph ph-download-simple text-lg"></i>
                             </div>
                         </div>
                     </div>
-                    <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded mb-3 uppercase tracking-wider" data-i18n="step3_tag">Langkah 3</span>
-                    <h3 class="text-base md:text-lg font-bold text-slate-800" data-i18n="step3_title">Sesuaikan & Unduh</h3>
+                    <span class="inline-block px-4 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg mb-4 uppercase tracking-widest border border-emerald-100" data-i18n="step3_tag">Langkah 3</span>
+                    <h3 class="text-lg md:text-xl font-extrabold text-slate-800" data-i18n="step3_title">Sesuaikan & Unduh</h3>
                 </a>
 
             </div>
@@ -527,135 +545,135 @@
     </section>
 
     <!-- Main Content (Generator) -->
-    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <main class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         
         <!-- Left Column: Settings Panel -->
-        <div class="lg:col-span-7 space-y-6">
+        <div class="lg:col-span-7 space-y-8">
             
             <!-- Panel 1: Konten -->
-            <div id="section-content" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 animate-fade-in relative overflow-hidden scroll-mt-24">
-                <div class="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center text-sm font-bold shadow-md">1</div>
-                        <h2 class="text-xl font-bold text-slate-800" data-i18n="panel1_title">Complete the content</h2>
+            <div id="section-content" class="bg-white rounded-3xl p-6 md:p-8 shadow-lg border border-slate-200 animate-fade-in relative overflow-hidden scroll-mt-28">
+                <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center text-lg font-black shadow-md">1</div>
+                        <h2 class="text-2xl font-extrabold text-slate-800" data-i18n="panel1_title">Complete the content</h2>
                     </div>
                 </div>
 
                 <!-- Scanner Launch Button (Full Version Only) -->
                 <div id="scanner-btn-container" class="hidden mb-6">
-                    <button id="btn-open-scanner" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white py-3 rounded-xl font-bold shadow-md transition-all">
-                        <i class="ph ph-camera text-xl"></i> <span data-i18n="scan_btn">Scan QR (Kamera)</span>
+                    <button id="btn-open-scanner" class="w-full flex items-center justify-center gap-3 bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg transition-all text-sm md:text-base border border-slate-700">
+                        <i class="ph ph-camera text-2xl"></i> <span data-i18n="scan_btn">Scan QR (Kamera)</span>
                     </button>
                 </div>
                 
-                <div class="flex gap-2 mb-6 p-1.5 bg-slate-100 rounded-xl border border-slate-200">
-                    <button id="tab-single" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-emerald-600 shadow transition-all" data-i18n="tab_single">Single QR</button>
-                    <button id="tab-bulk" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white/50 transition-all" data-i18n="tab_bulk">Bulk Generate</button>
+                <div class="flex gap-2 mb-8 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
+                    <button id="tab-single" class="flex-1 py-3 text-sm md:text-base font-bold rounded-xl bg-white text-emerald-600 shadow-md transition-all" data-i18n="tab_single">Single QR</button>
+                    <button id="tab-bulk" class="flex-1 py-3 text-sm md:text-base font-bold rounded-xl text-slate-500 hover:text-slate-800 hover:bg-white/60 transition-all" data-i18n="tab_bulk">Bulk Generate</button>
                 </div>
 
                 <!-- Single Mode View -->
-                <div id="single-mode-container" class="space-y-6">
+                <div id="single-mode-container" class="space-y-8">
                     <!-- Types Grid (Colorful Icons) -->
-                    <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
-                        <button class="type-btn active flex flex-col items-center justify-center p-3 rounded-xl border-2 border-blue-500 bg-blue-50 text-blue-700 transition-all shadow-sm" data-type="link" data-color="blue">
-                            <i class="ph ph-link text-3xl mb-1 text-blue-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">Link</span>
+                    <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 md:gap-4">
+                        <button class="type-btn active flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-blue-500 bg-blue-50 text-blue-700 transition-all shadow-sm" data-type="link" data-color="blue">
+                            <i class="ph ph-link text-3xl md:text-4xl mb-2 text-blue-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">Link</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-slate-50 text-slate-600 transition-all" data-type="text" data-color="slate">
-                            <i class="ph ph-text-align-left text-3xl mb-1 text-slate-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">Text</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-slate-50 text-slate-600 transition-all" data-type="text" data-color="slate">
+                            <i class="ph ph-text-align-left text-3xl md:text-4xl mb-2 text-slate-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">Text</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-red-50 text-slate-600 hover:text-red-600 transition-all" data-type="email" data-color="red">
-                            <i class="ph ph-envelope-simple text-3xl mb-1 text-red-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">E-mail</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-red-50 text-slate-600 hover:text-red-600 transition-all" data-type="email" data-color="red">
+                            <i class="ph ph-envelope-simple text-3xl md:text-4xl mb-2 text-red-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">E-mail</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-purple-50 text-slate-600 hover:text-purple-600 transition-all" data-type="call" data-color="purple">
-                            <i class="ph ph-phone text-3xl mb-1 text-purple-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">Call</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-purple-50 text-slate-600 hover:text-purple-600 transition-all" data-type="call" data-color="purple">
+                            <i class="ph ph-phone text-3xl md:text-4xl mb-2 text-purple-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">Call</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-yellow-50 text-slate-600 hover:text-yellow-600 transition-all" data-type="sms" data-color="yellow">
-                            <i class="ph ph-chat-text text-3xl mb-1 text-yellow-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">SMS</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-yellow-50 text-slate-600 hover:text-yellow-600 transition-all" data-type="sms" data-color="yellow">
+                            <i class="ph ph-chat-text text-3xl md:text-4xl mb-2 text-yellow-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">SMS</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 transition-all" data-type="vcard" data-color="indigo">
-                            <i class="ph ph-identification-card text-3xl mb-1 text-indigo-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">V-card</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 transition-all" data-type="vcard" data-color="indigo">
+                            <i class="ph ph-identification-card text-3xl md:text-4xl mb-2 text-indigo-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">V-card</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-green-50 text-slate-600 hover:text-green-600 transition-all" data-type="whatsapp" data-color="green">
-                            <i class="ph ph-whatsapp-logo text-3xl mb-1 text-green-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">WhatsApp</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-green-50 text-slate-600 hover:text-green-600 transition-all" data-type="whatsapp" data-color="green">
+                            <i class="ph ph-whatsapp-logo text-3xl md:text-4xl mb-2 text-green-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">WhatsApp</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-cyan-50 text-slate-600 hover:text-cyan-600 transition-all" data-type="wifi" data-color="cyan">
-                            <i class="ph ph-wifi-high text-3xl mb-1 text-cyan-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">WI-FI</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-cyan-50 text-slate-600 hover:text-cyan-600 transition-all" data-type="wifi" data-color="cyan">
+                            <i class="ph ph-wifi-high text-3xl md:text-4xl mb-2 text-cyan-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">WI-FI</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition-all" data-type="generic" data-color="rose">
-                            <i class="ph ph-file-pdf text-3xl mb-1 text-rose-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">PDF</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition-all" data-type="generic" data-color="rose">
+                            <i class="ph ph-file-pdf text-3xl md:text-4xl mb-2 text-rose-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">PDF</span>
                         </button>
-                        <button class="type-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:bg-orange-50 text-slate-600 hover:text-orange-600 transition-all" data-type="generic" data-color="orange">
-                            <i class="ph ph-device-mobile text-3xl mb-1 text-orange-500"></i>
-                            <span class="text-[10px] md:text-xs font-bold">App</span>
+                        <button class="type-btn flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl border-2 border-slate-200 hover:bg-orange-50 text-slate-600 hover:text-orange-600 transition-all" data-type="generic" data-color="orange">
+                            <i class="ph ph-device-mobile text-3xl md:text-4xl mb-2 text-orange-500"></i>
+                            <span class="text-[10px] md:text-xs font-extrabold tracking-wide uppercase">App</span>
                         </button>
                     </div>
 
                     <hr class="border-slate-200">
 
                     <!-- Dynamic Forms -->
-                    <div id="forms-wrapper">
+                    <div id="forms-wrapper" class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                         <!-- Form: Link -->
                         <div id="form-link" class="type-form block">
                             <label class="block text-sm font-bold text-slate-700 mb-2" data-i18n="input_link_lbl">Enter your Website</label>
-                            <input type="url" id="input-link" value="https://google.com" class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none text-slate-800 font-medium text-lg" placeholder="https://...">
+                            <input type="url" id="input-link" value="https://google.com" class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none text-slate-800 font-semibold text-base md:text-lg shadow-sm bg-white" placeholder="https://...">
                         </div>
                         
                         <!-- Form: Text -->
                         <div id="form-text" class="type-form hidden">
                             <label class="block text-sm font-bold text-slate-700 mb-2" data-i18n="input_txt_lbl">Masukkan Teks</label>
-                            <textarea id="input-text" rows="3" class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-slate-500 focus:ring-4 focus:ring-slate-100 transition-all outline-none text-slate-800 font-medium" placeholder="Ketik pesan Anda di sini..." data-i18n-ph="input_txt_ph"></textarea>
+                            <textarea id="input-text" rows="4" class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-slate-500 focus:ring-4 focus:ring-slate-100 transition-all outline-none text-slate-800 font-semibold shadow-sm bg-white" placeholder="Ketik pesan Anda di sini..." data-i18n-ph="input_txt_ph"></textarea>
                         </div>
 
                         <!-- Form: Email -->
-                        <div id="form-email" class="type-form hidden space-y-3">
+                        <div id="form-email" class="type-form hidden space-y-4">
                             <label class="block text-sm font-bold text-slate-700 mb-2">Email Info</label>
-                            <input type="email" id="input-email-to" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-red-500 outline-none text-slate-800 mb-2" placeholder="Email tujuan...">
-                            <input type="text" id="input-email-sub" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-red-500 outline-none text-slate-800 mb-2" placeholder="Subjek email...">
-                            <textarea id="input-email-msg" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-red-500 outline-none text-slate-800" placeholder="Pesan..."></textarea>
+                            <input type="email" id="input-email-to" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-red-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Email tujuan...">
+                            <input type="text" id="input-email-sub" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-red-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Subjek email...">
+                            <textarea id="input-email-msg" rows="3" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-red-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Pesan..."></textarea>
                         </div>
                         
                         <!-- Form: Call -->
                         <div id="form-call" class="type-form hidden">
                             <label class="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
-                            <input type="tel" id="input-call" class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-purple-500 outline-none text-slate-800 text-lg font-medium" placeholder="+62812...">
+                            <input type="tel" id="input-call" class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-purple-500 outline-none text-slate-800 font-semibold text-lg shadow-sm bg-white" placeholder="+62812...">
                         </div>
                         
                         <!-- Form: SMS -->
-                        <div id="form-sms" class="type-form hidden space-y-3">
-                            <input type="tel" id="input-sms-phone" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-yellow-500 outline-none text-slate-800" placeholder="Nomor Telepon...">
-                            <textarea id="input-sms-msg" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-yellow-500 outline-none text-slate-800" placeholder="Isi SMS..."></textarea>
+                        <div id="form-sms" class="type-form hidden space-y-4">
+                            <input type="tel" id="input-sms-phone" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-yellow-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Nomor Telepon...">
+                            <textarea id="input-sms-msg" rows="3" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-yellow-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Isi SMS..."></textarea>
                         </div>
                         
                         <!-- Form: WhatsApp -->
-                        <div id="form-whatsapp" class="type-form hidden space-y-3">
-                            <input type="tel" id="input-wa-phone" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 outline-none text-slate-800 font-medium" placeholder="WhatsApp Number (e.g. 62812...)">
-                            <textarea id="input-wa-msg" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 outline-none text-slate-800" placeholder="Pesan awal..."></textarea>
+                        <div id="form-whatsapp" class="type-form hidden space-y-4">
+                            <input type="tel" id="input-wa-phone" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 outline-none text-slate-800 font-semibold shadow-sm bg-white" placeholder="WhatsApp Number (e.g. 62812...)">
+                            <textarea id="input-wa-msg" rows="3" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-green-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Pesan awal..."></textarea>
                         </div>
                         
                         <!-- Form: V-Card -->
                         <div id="form-vcard" class="type-form hidden grid grid-cols-2 gap-4">
-                            <input type="text" id="input-vc-name" class="col-span-2 w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800" placeholder="Nama Lengkap">
-                            <input type="text" id="input-vc-org" class="col-span-2 w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800" placeholder="Perusahaan / Organisasi">
-                            <input type="tel" id="input-vc-tel" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800" placeholder="No. Telepon">
-                            <input type="email" id="input-vc-email" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800" placeholder="Email">
+                            <input type="text" id="input-vc-name" class="col-span-2 w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Nama Lengkap">
+                            <input type="text" id="input-vc-org" class="col-span-2 w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Perusahaan / Organisasi">
+                            <input type="tel" id="input-vc-tel" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="No. Telepon">
+                            <input type="email" id="input-vc-email" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Email">
                         </div>
                         
                         <!-- Form: WI-FI -->
-                        <div id="form-wifi" class="type-form hidden space-y-3">
-                            <input type="text" id="input-wifi-ssid" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-cyan-500 outline-none text-slate-800 font-medium" placeholder="SSID (Network Name)">
-                            <div class="flex flex-col md:flex-row gap-3">
-                                <input type="password" id="input-wifi-pw" class="flex-1 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-cyan-500 outline-none text-slate-800" placeholder="Password WiFi">
-                                <select id="input-wifi-enc" class="flex-1 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-cyan-500 outline-none text-slate-800 bg-white cursor-pointer">
+                        <div id="form-wifi" class="type-form hidden space-y-4">
+                            <input type="text" id="input-wifi-ssid" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-cyan-500 outline-none text-slate-800 font-semibold shadow-sm bg-white" placeholder="SSID (Network Name)">
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <input type="password" id="input-wifi-pw" class="flex-1 px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-cyan-500 outline-none text-slate-800 font-medium shadow-sm bg-white" placeholder="Password WiFi">
+                                <select id="input-wifi-enc" class="flex-1 px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-cyan-500 outline-none text-slate-800 font-bold shadow-sm bg-white cursor-pointer">
                                     <option value="WPA">WPA/WPA2</option>
                                     <option value="WEP">WEP</option>
                                     <option value="nopass">Tanpa Password</option>
@@ -666,89 +684,89 @@
                         <!-- Form: Generic -->
                         <div id="form-generic" class="type-form hidden">
                             <label class="block text-sm font-bold text-slate-700 mb-2">URL / Link Dokumen</label>
-                            <input type="url" id="input-generic" class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all outline-none text-slate-800 font-medium text-lg" placeholder="https://...">
+                            <input type="url" id="input-generic" class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all outline-none text-slate-800 font-semibold text-lg shadow-sm bg-white" placeholder="https://...">
                         </div>
                     </div>
                 </div>
                 
                 <!-- Bulk Mode View -->
                 <div id="bulk-mode-container" class="hidden mt-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="block text-sm font-bold text-slate-700" data-i18n="bulk_lbl">Data Bulk (Satu Baris = Satu QR)</label>
-                        <button id="btn-auto-bulk" class="text-[10px] font-bold bg-amber-100 text-amber-700 px-3 py-1.5 rounded flex items-center gap-1 hover:bg-amber-200 transition-colors shadow-sm">
-                            <i class="ph ph-magic-wand"></i> <span data-i18n="btn_auto_bulk">Auto Generate Contoh</span>
+                    <div class="flex items-center justify-between mb-3 bg-slate-50 p-4 rounded-t-xl border-b border-slate-200">
+                        <label class="block text-sm font-bold text-slate-800" data-i18n="bulk_lbl">Data Bulk (Satu Baris = Satu QR)</label>
+                        <button id="btn-auto-bulk" class="text-xs font-bold bg-amber-100 text-amber-800 px-4 py-2 rounded-lg flex items-center gap-1.5 hover:bg-amber-200 transition-colors shadow-sm border border-amber-200">
+                            <i class="ph ph-magic-wand text-lg"></i> <span data-i18n="btn_auto_bulk">Auto Generate Contoh</span>
                         </button>
                     </div>
-                    <textarea id="qr-data-bulk" rows="6" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none text-slate-800 font-medium text-sm leading-relaxed" placeholder="https://google.com&#10;https://facebook.com&#10;https://twitter.com"></textarea>
-                    <p class="text-xs text-slate-500 mt-2 font-medium" data-i18n="bulk_desc"><i class="ph ph-info"></i> Masukkan hingga 1000+ data (URL atau teks biasa). Setiap baris akan diproses sebagai QR Code terpisah ke dalam format ZIP.</p>
+                    <textarea id="qr-data-bulk" rows="8" class="w-full px-5 py-4 rounded-b-xl rounded-t-none border-2 border-t-0 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none text-slate-800 font-medium text-sm leading-relaxed bg-white shadow-sm" placeholder="https://google.com&#10;https://facebook.com&#10;https://twitter.com"></textarea>
+                    <p class="text-sm text-slate-500 mt-3 font-medium bg-blue-50 p-3 rounded-lg border border-blue-100" data-i18n="bulk_desc"><i class="ph ph-info text-blue-500 mr-1"></i> Masukkan hingga 1000+ data (URL atau teks biasa). Setiap baris akan diproses sebagai QR Code terpisah ke dalam format ZIP.</p>
                 </div>
             </div>
 
             <!-- Panel 2: Design QR Code -->
-            <div id="section-design" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 animate-fade-in delay-100 relative overflow-hidden scroll-mt-24">
-                <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-800"></div>
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center text-sm font-bold shadow-md">2</div>
-                    <h2 class="text-xl font-bold text-slate-800" data-i18n="panel2_title">Design your QR Code</h2>
+            <div id="section-design" class="bg-white rounded-3xl p-6 md:p-8 shadow-lg border border-slate-200 animate-fade-in delay-100 relative overflow-hidden scroll-mt-28">
+                <div class="absolute top-0 left-0 w-2 h-full bg-slate-800"></div>
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center text-lg font-black shadow-md">2</div>
+                    <h2 class="text-2xl font-extrabold text-slate-800" data-i18n="panel2_title">Design your QR Code</h2>
                 </div>
                 
                 <!-- Sub-tabs for Design -->
-                <div class="flex gap-4 md:gap-8 border-b-2 border-slate-100 mb-6">
-                    <button class="design-tab-btn pb-3 text-sm font-bold text-emerald-600 border-b-4 border-emerald-500 transition-colors" data-target="panel-design-frame" data-i18n="tab_frame">Frame</button>
-                    <button class="design-tab-btn pb-3 text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors border-b-4 border-transparent" data-target="panel-design-shape" data-i18n="tab_shape">Shape & Color</button>
-                    <button class="design-tab-btn pb-3 text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors border-b-4 border-transparent" data-target="panel-design-logo" data-i18n="tab_logo">Logo</button>
+                <div class="flex gap-4 md:gap-8 border-b-2 border-slate-100 mb-8 px-2">
+                    <button class="design-tab-btn pb-3 text-base font-bold text-emerald-600 border-b-4 border-emerald-500 transition-colors" data-target="panel-design-frame" data-i18n="tab_frame">Frame</button>
+                    <button class="design-tab-btn pb-3 text-base font-bold text-slate-400 hover:text-slate-600 transition-colors border-b-4 border-transparent" data-target="panel-design-shape" data-i18n="tab_shape">Shape & Color</button>
+                    <button class="design-tab-btn pb-3 text-base font-bold text-slate-400 hover:text-slate-600 transition-colors border-b-4 border-transparent" data-target="panel-design-logo" data-i18n="tab_logo">Logo</button>
                 </div>
 
                 <!-- DESIGN TAB: FRAME -->
                 <div id="panel-design-frame" class="design-panel block">
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-3">
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-4">
                             <label class="text-sm font-bold text-slate-700" data-i18n="sel_frame">Pilih Template Bingkai</label>
                         </div>
                         
-                        <div class="flex gap-3 overflow-x-auto pb-3 pt-1 no-scrollbar">
-                            <button class="frame-tpl-btn active min-w-[80px] h-[80px] rounded-xl border-2 border-emerald-500 flex flex-col items-center justify-center bg-emerald-50 transition-all hover:border-emerald-400 shrink-0 shadow-sm" data-tpl="none">
-                                <i class="ph ph-x text-2xl text-slate-800 mb-1"></i>
-                                <span class="text-[10px] font-bold text-slate-700">None</span>
+                        <div class="flex gap-4 overflow-x-auto pb-4 pt-1 px-1 no-scrollbar">
+                            <button class="frame-tpl-btn active min-w-[90px] h-[90px] rounded-2xl border-2 border-emerald-500 flex flex-col items-center justify-center bg-emerald-50 transition-all hover:border-emerald-400 shrink-0 shadow-md transform hover:-translate-y-1" data-tpl="none">
+                                <i class="ph ph-x text-3xl text-slate-800 mb-1"></i>
+                                <span class="text-[11px] font-bold text-slate-700 uppercase tracking-wider">None</span>
                             </button>
-                            <button class="frame-tpl-btn min-w-[80px] h-[80px] rounded-xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-1.5" data-tpl="basic">
-                                <div class="w-full h-full border-2 border-slate-800 rounded flex flex-col items-center justify-end p-0.5">
-                                    <div class="w-full bg-slate-800 text-white text-[7px] text-center rounded-sm font-bold">SCAN ME</div>
+                            <button class="frame-tpl-btn min-w-[90px] h-[90px] rounded-2xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-2 transform hover:-translate-y-1 hover:shadow-md" data-tpl="basic">
+                                <div class="w-full h-full border-[3px] border-slate-800 rounded-lg flex flex-col items-center justify-end p-0.5">
+                                    <div class="w-full bg-slate-800 text-white text-[8px] text-center rounded-sm font-bold pb-0.5 pt-0.5">SCAN ME</div>
                                 </div>
                             </button>
-                            <button class="frame-tpl-btn min-w-[80px] h-[80px] rounded-xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-1.5" data-tpl="badge">
-                                <div class="w-full h-full bg-emerald-600 rounded-xl flex flex-col items-center justify-end pb-1 pt-1">
-                                    <div class="w-4/5 h-4/5 bg-white rounded-lg mb-0.5"></div>
-                                    <div class="text-white text-[7px] font-bold">SCAN ME</div>
+                            <button class="frame-tpl-btn min-w-[90px] h-[90px] rounded-2xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-2 transform hover:-translate-y-1 hover:shadow-md" data-tpl="badge">
+                                <div class="w-full h-full bg-emerald-600 rounded-xl flex flex-col items-center justify-end pb-1.5 pt-1.5">
+                                    <div class="w-4/5 h-4/5 bg-white rounded-lg mb-1"></div>
+                                    <div class="text-white text-[8px] font-extrabold tracking-wider">SCAN ME</div>
                                 </div>
                             </button>
-                            <button class="frame-tpl-btn min-w-[80px] h-[80px] rounded-xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-1.5 shadow-sm" data-tpl="polaroid">
-                                <div class="w-12 h-14 bg-white border border-slate-200 shadow-sm rounded-sm flex flex-col items-center pt-1 pb-1">
-                                    <div class="w-10 h-10 bg-slate-200 mb-1"></div>
-                                    <div class="text-slate-800 text-[6px] font-bold uppercase">SCAN ME</div>
+                            <button class="frame-tpl-btn min-w-[90px] h-[90px] rounded-2xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-2 shadow-sm transform hover:-translate-y-1 hover:shadow-md" data-tpl="polaroid">
+                                <div class="w-14 h-16 bg-white border border-slate-200 shadow-sm rounded flex flex-col items-center pt-1.5 pb-1.5">
+                                    <div class="w-11 h-11 bg-slate-200 mb-1 rounded-sm"></div>
+                                    <div class="text-slate-800 text-[6px] font-extrabold uppercase tracking-widest mt-auto">SCAN ME</div>
                                 </div>
                             </button>
-                            <button class="frame-tpl-btn min-w-[80px] h-[80px] rounded-xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-1.5" data-tpl="ticket">
-                                <div class="w-full h-full border-2 border-dashed border-emerald-600 bg-emerald-50 flex flex-col items-center justify-end p-0.5 relative">
-                                    <div class="w-full text-emerald-800 text-[7px] font-bold text-center">SCAN ME</div>
+                            <button class="frame-tpl-btn min-w-[90px] h-[90px] rounded-2xl border-2 border-slate-200 flex flex-col items-center justify-center hover:bg-slate-50 transition-all shrink-0 p-2 transform hover:-translate-y-1 hover:shadow-md" data-tpl="ticket">
+                                <div class="w-full h-full border-2 border-dashed border-emerald-600 bg-emerald-50 rounded-md flex flex-col items-center justify-end p-1 relative">
+                                    <div class="w-full text-emerald-800 text-[8px] font-bold text-center bg-emerald-100 rounded-sm">SCAN ME</div>
                                 </div>
                             </button>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2" data-i18n="frame_lbl">Teks Label Bingkai</label>
-                        <input type="text" id="frame-label" value="SCAN ME" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none text-slate-800 font-bold" placeholder="Contoh: SCAN ME">
-                        <p id="bulk-label-note" class="text-xs font-medium text-amber-600 mt-2 hidden">*Label ini akan dicetak secara massal pada setiap QR di dalam mode Bulk.</p>
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                        <label class="block text-sm font-bold text-slate-700 mb-3" data-i18n="frame_lbl">Teks Label Bingkai</label>
+                        <input type="text" id="frame-label" value="SCAN ME" class="w-full px-5 py-3.5 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none text-slate-800 font-bold text-base bg-white shadow-sm" placeholder="Contoh: SCAN ME">
+                        <p id="bulk-label-note" class="text-xs font-medium text-amber-600 mt-3 hidden bg-amber-50 p-2 rounded-lg inline-block border border-amber-100">*Label ini akan dicetak secara massal pada setiap QR di dalam mode Bulk.</p>
                     </div>
                 </div>
 
                 <!-- DESIGN TAB: SHAPE & COLOR -->
                 <div id="panel-design-shape" class="design-panel hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-inner">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2" data-i18n="shape_dot">Bentuk Dot</label>
-                            <select id="dot-shape" class="w-full px-3 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 outline-none bg-white text-slate-800 font-medium cursor-pointer">
+                            <label class="block text-sm font-bold text-slate-700 mb-3" data-i18n="shape_dot">Bentuk Dot</label>
+                            <select id="dot-shape" class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-emerald-500 outline-none bg-white text-slate-800 font-bold cursor-pointer shadow-sm">
                                 <option value="rounded">Rounded</option>
                                 <option value="dots">Dots</option>
                                 <option value="classy">Classy</option>
@@ -756,15 +774,15 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2" data-i18n="color_dot">Warna Dot</label>
-                            <div class="flex items-center gap-3 h-[52px]">
+                            <label class="block text-sm font-bold text-slate-700 mb-3" data-i18n="color_dot">Warna Dot</label>
+                            <div class="flex items-center gap-3 h-[54px] bg-white px-3 border-2 border-slate-200 rounded-xl shadow-sm">
                                 <input type="color" id="dot-color" value="#059669">
-                                <span class="text-sm font-bold text-slate-600 font-mono bg-white px-3 py-2 border border-slate-200 rounded-lg" id="dot-color-hex">#059669</span>
+                                <span class="text-sm font-bold text-slate-700 font-mono" id="dot-color-hex">#059669</span>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2" data-i18n="shape_corner">Pojok QR</label>
-                            <select id="corner-shape" class="w-full px-3 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 outline-none bg-white text-slate-800 font-medium cursor-pointer">
+                            <label class="block text-sm font-bold text-slate-700 mb-3" data-i18n="shape_corner">Pojok QR</label>
+                            <select id="corner-shape" class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-emerald-500 outline-none bg-white text-slate-800 font-bold cursor-pointer shadow-sm">
                                 <option value="extra-rounded">Extra Rounded</option>
                                 <option value="dot">Dot</option>
                                 <option value="square">Square</option>
@@ -775,28 +793,28 @@
 
                 <!-- DESIGN TAB: LOGO -->
                 <div id="panel-design-logo" class="design-panel hidden">
-                    <label class="block text-sm font-bold text-slate-700 mb-2" data-i18n="lbl_logo">Custom Logo (Tengah)</label>
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="flex-1 relative">
-                            <input type="file" id="logo-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                            <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-emerald-500 hover:bg-emerald-50 transition-all bg-slate-50 flex flex-col items-center justify-center gap-2">
-                                <i class="ph ph-upload-simple text-2xl text-slate-400"></i>
-                                <span class="text-sm font-bold text-slate-600" id="logo-filename" data-i18n="upload_logo">Upload Logo</span>
+                    <label class="block text-sm font-bold text-slate-700 mb-3" data-i18n="lbl_logo">Custom Logo (Tengah)</label>
+                    <div class="flex flex-col md:flex-row items-center gap-4 mb-8">
+                        <div class="w-full md:flex-1 relative">
+                            <input type="file" id="logo-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <div class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-emerald-500 hover:bg-emerald-50 transition-all bg-slate-50 flex flex-col items-center justify-center gap-2 shadow-inner">
+                                <div class="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400 mb-1"><i class="ph ph-upload-simple text-2xl"></i></div>
+                                <span class="text-sm font-bold text-slate-700" id="logo-filename" data-i18n="upload_logo">Upload Logo Maks 2MB</span>
                             </div>
                         </div>
-                        <button id="remove-logo" class="bg-red-50 text-red-600 px-4 py-4 rounded-xl font-bold hover:bg-red-100 hidden transition-colors" data-i18n="btn_remove">Hapus</button>
+                        <button id="remove-logo" class="w-full md:w-auto bg-red-50 text-red-600 px-6 py-4 rounded-xl font-bold hover:bg-red-100 hidden transition-colors" data-i18n="btn_remove">Hapus</button>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-inner">
                         <div>
-                            <div class="flex justify-between mb-3">
-                                <label class="text-xs font-bold text-emerald-700 uppercase tracking-wider" data-i18n="logo_size">Ukuran Logo</label>
+                            <div class="flex justify-between mb-4">
+                                <label class="text-xs font-extrabold text-emerald-700 uppercase tracking-wider" data-i18n="logo_size">Ukuran Logo</label>
                             </div>
                             <input type="range" id="logo-size" min="0.1" max="0.5" step="0.05" value="0.4">
                         </div>
                         <div>
-                            <div class="flex justify-between mb-3">
-                                <label class="text-xs font-bold text-slate-600 uppercase tracking-wider" data-i18n="logo_margin">Jarak Bingkai Logo</label>
+                            <div class="flex justify-between mb-4">
+                                <label class="text-xs font-extrabold text-slate-600 uppercase tracking-wider" data-i18n="logo_margin">Jarak Bingkai Logo</label>
                             </div>
                             <input type="range" id="logo-margin" min="0" max="10" step="1" value="0">
                         </div>
@@ -808,37 +826,37 @@
 
         <!-- Right Column: Preview Panel -->
         <div class="lg:col-span-5 animate-fade-in delay-200">
-            <div id="section-download" class="sticky top-6 bg-slate-50 border border-slate-200 rounded-3xl p-8 flex flex-col items-center justify-center min-h-[550px] scroll-mt-24 shadow-sm">
+            <div id="section-download" class="sticky top-28 bg-white border border-slate-200 rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center min-h-[550px] scroll-mt-28 shadow-xl shadow-slate-200/50">
                 
                 <!-- Container QR -->
                 <div id="download-container" class="bg-transparent flex flex-col items-center justify-center p-2 mb-8 w-full max-w-[320px]">
                     <div id="qr-frame" class="w-full flex flex-col items-center justify-between transition-all duration-300 relative" style="padding: 0px; border: none; background-color: transparent; border-radius: 0px;">
                         
                         <div id="frame-deco-top" class="absolute -top-4 left-0 w-full flex justify-center hidden">
-                            <div class="w-12 h-3 bg-slate-200 rounded-full shadow-inner opacity-80 border border-slate-300"></div>
+                            <div class="w-16 h-4 bg-white rounded-full shadow-md opacity-90 border border-slate-200"></div>
                         </div>
 
-                        <div id="qr-canvas-container" class="flex items-center justify-center bg-white w-full aspect-square rounded-lg p-2 z-10 shadow-sm border border-slate-100" style="background: transparent;"></div>
+                        <div id="qr-canvas-container" class="flex items-center justify-center w-full aspect-square rounded-xl p-2 z-10 shadow-sm border border-slate-100 bg-white transition-all"></div>
                         
-                        <div id="qr-label-display" class="mt-3 font-extrabold tracking-wider text-center uppercase z-10 hidden text-xl" style="color: #059669;">
+                        <div id="qr-label-display" class="mt-4 font-extrabold tracking-widest text-center uppercase z-10 hidden text-xl" style="color: #059669;">
                             SCAN ME
                         </div>
                     </div>
                 </div>
 
-                <div class="w-full max-w-[320px] mb-4">
-                    <select id="download-format" class="w-full px-5 py-4 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none text-sm font-bold text-slate-800 bg-white shadow-sm transition-all cursor-pointer">
+                <div class="w-full max-w-[320px] mb-5 bg-slate-50 p-2 rounded-2xl border border-slate-100">
+                    <select id="download-format" class="w-full px-5 py-3.5 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none text-sm font-bold text-slate-800 bg-white shadow-sm transition-all cursor-pointer">
                         <option value="jpeg">Format: JPG (White BG)</option>
                         <option value="png">Format: PNG (High Quality)</option>
                         <option value="svg">Format: SVG (QR Only)</option>
                     </select>
                 </div>
 
-                <button id="download-btn" class="w-full max-w-[320px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/40 relative overflow-hidden group text-lg">
-                    <span id="download-btn-text" class="flex items-center gap-2 relative z-10 group-hover:scale-105 transition-transform"><i class="ph ph-download-simple text-2xl"></i> <span data-i18n="btn_dl">Download File</span></span>
+                <button id="download-btn" class="w-full max-w-[320px] bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-emerald-600/40 relative overflow-hidden group text-lg transform hover:-translate-y-1">
+                    <span id="download-btn-text" class="flex items-center gap-3 relative z-10 group-hover:scale-105 transition-transform"><i class="ph ph-download-simple text-3xl"></i> <span data-i18n="btn_dl">Download File</span></span>
                     <div id="download-progress-bar" class="absolute left-0 top-0 bottom-0 bg-emerald-800 w-0 z-0 transition-all duration-300"></div>
                 </button>
-                <p class="text-xs font-semibold text-slate-500 mt-4 text-center" data-i18n="dl_desc">Resolusi Tinggi & Support Google Lens</p>
+                <p class="text-xs font-bold text-slate-400 mt-5 text-center flex items-center justify-center gap-1.5" data-i18n="dl_desc"><i class="ph-fill ph-check-circle text-emerald-500"></i> Resolusi Tinggi & Support Google Lens</p>
                 
             </div>
         </div>
@@ -846,40 +864,40 @@
     </main>
 
     <!-- LANDING PAGE SECTION: Frame Gallery -->
-    <section class="bg-slate-50 py-16 border-t border-slate-200">
+    <section class="bg-slate-50 py-20 border-t border-slate-200">
         <div class="max-w-6xl mx-auto px-4 text-center">
-            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">
-                <span data-i18n="gallery_title1">Jelajahi Koleksi Lengkap Kami Dari</span> <span class="text-emerald-600" data-i18n="gallery_title2">Bingkai</span> QR Code
+            <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">
+                <span data-i18n="gallery_title1">Jelajahi Koleksi Lengkap Kami Dari</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-purple-600" data-i18n="gallery_title2">Bingkai</span> QR Code
             </h2>
-            <p class="text-sm md:text-base text-slate-600 font-medium max-w-3xl mx-auto mb-12" data-i18n="gallery_desc">
-                Buat QR Code Anda menonjol dengan koleksi bingkai gratis kami yang luas. Dengan berbagai opsi opsi, termasuk gaya minimalis hingga desain bentuk lencana (badge), Anda pasti akan menemukan kombinasi yang sempurna.
+            <p class="text-base md:text-lg text-slate-600 font-medium max-w-3xl mx-auto mb-16 leading-relaxed" data-i18n="gallery_desc">
+                Buat QR Code Anda menonjol dengan koleksi bingkai gratis kami yang luas. Dengan berbagai opsi, termasuk gaya minimalis hingga desain bentuk lencana (badge), Anda pasti akan menemukan kombinasi yang sempurna.
             </p>
 
-            <div class="flex flex-wrap justify-center gap-6 md:gap-10">
+            <div class="flex flex-wrap justify-center gap-8 md:gap-14">
                 <!-- Mockups -->
-                <div class="w-40 h-48 relative flex items-center justify-center group cursor-default">
-                    <div class="absolute inset-0 bg-rose-100 rounded-t-lg border-b-[30px] border-l-[80px] border-r-[80px] border-b-rose-200 border-l-transparent border-r-transparent transform rotate-180 translate-y-8 group-hover:translate-y-12 transition-transform"></div>
-                    <div class="absolute inset-0 bg-rose-200 rounded-b-md shadow-sm top-16 z-0 border-t-[40px] border-l-[80px] border-r-[80px] border-t-transparent border-l-rose-200 border-r-rose-300"></div>
-                    <div class="w-24 h-24 bg-white rounded-lg p-2 shadow-sm relative z-10 -translate-y-4 group-hover:-translate-y-8 transition-transform border border-slate-100">
+                <div class="w-44 h-52 relative flex items-center justify-center group cursor-default hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-rose-100 rounded-t-xl border-b-[35px] border-l-[90px] border-r-[90px] border-b-rose-200 border-l-transparent border-r-transparent transform rotate-180 translate-y-10 group-hover:translate-y-14 transition-transform duration-500"></div>
+                    <div class="absolute inset-0 bg-rose-200 rounded-b-lg shadow-md top-16 z-0 border-t-[45px] border-l-[90px] border-r-[90px] border-t-transparent border-l-rose-200 border-r-rose-300"></div>
+                    <div class="w-28 h-28 bg-white rounded-xl p-2 shadow-lg relative z-10 -translate-y-6 group-hover:-translate-y-10 transition-transform duration-500 border border-slate-100">
                         <div class="w-full h-full bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=example&color=1e3a8a')] bg-contain opacity-80"></div>
                     </div>
-                    <span class="absolute top-4 right-2 text-2xl z-20">🌸</span>
-                    <span class="absolute bottom-6 left-4 text-xl z-20">🌿</span>
+                    <span class="absolute top-4 right-2 text-3xl z-20 animate-pulse">🌸</span>
+                    <span class="absolute bottom-8 left-4 text-2xl z-20">🌿</span>
                 </div>
-                <div class="w-40 h-48 relative flex items-center justify-center">
-                    <div class="absolute w-36 h-40 bg-amber-200 rounded-[50%_50%_50%_50%_/_60%_60%_40%_40%] shadow-inner flex items-center justify-center border border-amber-300">
-                        <div class="w-24 h-24 bg-white rounded-xl p-1.5 shadow-md mt-4 border border-slate-50">
+                <div class="w-44 h-52 relative flex items-center justify-center hover:scale-105 transition-transform duration-500">
+                    <div class="absolute w-40 h-44 bg-amber-200 rounded-[50%_50%_50%_50%_/_60%_60%_40%_40%] shadow-inner flex items-center justify-center border-4 border-white shadow-lg">
+                        <div class="w-28 h-28 bg-white rounded-2xl p-2 shadow-md mt-4 border border-slate-50">
                             <div class="w-full h-full bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=example&color=d97706')] bg-contain opacity-80"></div>
                         </div>
                     </div>
-                    <span class="absolute bottom-2 left-0 text-2xl z-10">🍃</span>
-                    <span class="absolute top-10 right-0 text-xl z-10">✨</span>
+                    <span class="absolute bottom-2 left-0 text-3xl z-10 animate-bounce">🍃</span>
+                    <span class="absolute top-10 right-0 text-2xl z-10">✨</span>
                 </div>
-                <div class="w-40 h-48 relative flex items-center justify-center">
-                    <div class="w-32 h-32 border-4 border-slate-800 rounded-2xl p-2 relative bg-white shadow-lg">
+                <div class="w-44 h-52 relative flex items-center justify-center hover:scale-105 transition-transform duration-500">
+                    <div class="w-36 h-36 border-4 border-slate-800 rounded-3xl p-3 relative bg-white shadow-2xl">
                         <div class="w-full h-full bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=example&color=1e293b')] bg-contain opacity-90"></div>
-                        <div class="absolute -bottom-3 left-2 text-2xl">🐤</div>
-                        <div class="absolute top-1/2 -right-3 text-lg">🌿</div>
+                        <div class="absolute -bottom-4 left-3 text-3xl">🐤</div>
+                        <div class="absolute top-1/2 -right-4 text-2xl">🌿</div>
                     </div>
                 </div>
             </div>
@@ -887,77 +905,77 @@
     </section>
 
     <!-- LANDING PAGE SECTION: Benefits -->
-    <section class="bg-white py-16 border-t border-slate-200 overflow-hidden">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+    <section class="bg-white py-20 border-t border-slate-200 overflow-hidden relative">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
                 <!-- Left: Colorful CSS Illustration -->
-                <div class="w-full lg:w-1/2 relative min-h-[400px] flex items-center justify-center">
+                <div class="w-full lg:w-1/2 relative min-h-[450px] flex items-center justify-center">
                     <!-- Background blobs -->
-                    <div class="absolute top-10 left-10 w-48 h-48 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-                    <div class="absolute top-10 right-10 w-48 h-48 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-                    <div class="absolute -bottom-8 left-20 w-48 h-48 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+                    <div class="absolute top-10 left-10 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob"></div>
+                    <div class="absolute top-10 right-10 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000"></div>
+                    <div class="absolute -bottom-10 left-20 w-64 h-64 bg-pink-100 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-4000"></div>
 
                     <!-- Floating UI Elements -->
                     <div class="relative z-10 w-full max-w-sm">
                         <!-- Main Box -->
-                        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 transform -rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <div class="bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-white transform -rotate-2 hover:rotate-0 transition-transform duration-500 animate-float">
                             <!-- Tools Row -->
-                            <div class="flex gap-3 mb-6">
-                                <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100"><i class="ph ph-qr-code text-xl"></i></div>
-                                <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100"><i class="ph ph-palette text-xl"></i></div>
-                                <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 border border-amber-100"><i class="ph ph-text-aa text-xl"></i></div>
-                                <div class="w-10 h-10 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600 border border-rose-100"><i class="ph ph-image text-xl"></i></div>
+                            <div class="flex gap-4 mb-8 justify-center">
+                                <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shadow-sm"><i class="ph ph-qr-code text-2xl"></i></div>
+                                <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-sm"><i class="ph ph-palette text-2xl"></i></div>
+                                <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 border border-amber-100 shadow-sm"><i class="ph ph-text-aa text-2xl"></i></div>
+                                <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600 border border-rose-100 shadow-sm"><i class="ph ph-image text-2xl"></i></div>
                             </div>
                             <!-- QR Mockup -->
-                            <div class="w-32 h-32 mx-auto border-4 border-slate-800 rounded-xl p-2 relative bg-white shadow-sm mb-4">
+                            <div class="w-40 h-40 mx-auto border-4 border-slate-800 rounded-2xl p-2.5 relative bg-white shadow-md mb-6">
                                 <div class="w-full h-full bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=example&color=1e293b')] bg-contain opacity-90"></div>
                             </div>
                             <!-- Button Mockup -->
-                            <div class="w-2/3 mx-auto h-10 bg-emerald-500 rounded-lg shadow-md flex items-center justify-center text-white font-bold text-sm">Scan Me!</div>
+                            <div class="w-3/4 mx-auto h-12 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/30 flex items-center justify-center text-white font-extrabold text-base tracking-wide">Scan Me!</div>
                         </div>
 
                         <!-- Floating Badges -->
-                        <div class="absolute -top-6 -right-6 bg-white p-3 rounded-xl shadow-lg border border-slate-100 animate-bounce cursor-default">
+                        <div class="absolute -top-8 -right-8 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 animate-bounce cursor-default">
                             <div class="flex gap-2">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white shadow-sm"></div>
-                                <div class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-sm -ml-3"></div>
-                                <div class="w-6 h-6 rounded-full bg-rose-500 border-2 border-white shadow-sm -ml-3"></div>
+                                <div class="w-8 h-8 rounded-full bg-blue-500 border-2 border-white shadow-sm"></div>
+                                <div class="w-8 h-8 rounded-full bg-emerald-500 border-2 border-white shadow-sm -ml-4"></div>
+                                <div class="w-8 h-8 rounded-full bg-rose-500 border-2 border-white shadow-sm -ml-4"></div>
                             </div>
                         </div>
 
-                        <div class="absolute -bottom-8 -left-8 bg-slate-800 p-4 rounded-2xl shadow-xl animate-pulse cursor-default text-white">
-                            <i class="ph ph-pencil-simple text-2xl"></i>
+                        <div class="absolute -bottom-6 -left-6 bg-slate-800 p-5 rounded-full shadow-2xl animate-pulse cursor-default text-white border-4 border-white">
+                            <i class="ph ph-pencil-simple text-3xl"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right: Content & List -->
                 <div class="w-full lg:w-1/2">
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6" data-i18n="benefits_title">Manfaat dari Scan Plus</h2>
-                    <p class="text-slate-600 mb-8 leading-relaxed font-medium" data-i18n="benefits_desc">
-                        Dengan menggunakan Scan Plus, Anda dapat melacak berapa banyak orang yang memindai QR Code Anda, dari mana, dan pada tanggal berapa. Selain itu, Anda dapat membuat Kode QR khusus dengan berbagai desain, warna, dan logo. <strong>Tanpa Perlu Coding!</strong>
+                    <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-tight" data-i18n="benefits_title">Manfaat Utama dari Scan Plus</h2>
+                    <p class="text-slate-600 text-lg mb-10 leading-relaxed font-medium" data-i18n="benefits_desc">
+                        Dengan menggunakan Scan Plus, Anda dapat melacak berapa banyak orang yang memindai QR Code Anda, dari mana, dan pada tanggal berapa. Selain itu, Anda dapat membuat Kode QR khusus dengan berbagai desain, warna, dan logo. <strong class="text-slate-800">Tanpa Perlu Coding!</strong>
                     </p>
 
                     <div class="space-y-4">
-                        <div class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 hover:shadow-sm transition-all group">
-                            <i class="ph-fill ph-check-circle text-2xl text-emerald-500 group-hover:scale-110 transition-transform"></i>
-                            <span class="font-bold text-slate-700" data-i18n="ben_1">Kode QR Dinamis & Statis</span>
+                        <div class="flex items-center gap-5 p-5 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 hover:shadow-md transition-all group bg-white">
+                            <i class="ph-fill ph-check-circle text-3xl text-emerald-500 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-slate-700 text-lg" data-i18n="ben_1">Kode QR Dinamis & Statis</span>
                         </div>
-                        <div class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm transition-all group">
-                            <i class="ph-fill ph-check-circle text-2xl text-blue-500 group-hover:scale-110 transition-transform"></i>
-                            <span class="font-bold text-slate-700" data-i18n="ben_2">Statistik Kode QR Lengkap</span>
+                        <div class="flex items-center gap-5 p-5 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50 hover:shadow-md transition-all group bg-white">
+                            <i class="ph-fill ph-chart-bar text-3xl text-blue-500 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-slate-700 text-lg" data-i18n="ben_2">Statistik Kode QR Lengkap</span>
                         </div>
-                        <div class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50 hover:shadow-sm transition-all group">
-                            <i class="ph-fill ph-check-circle text-2xl text-purple-500 group-hover:scale-110 transition-transform"></i>
-                            <span class="font-bold text-slate-700" data-i18n="ben_3">Halaman Pendaratan Khusus</span>
+                        <div class="flex items-center gap-5 p-5 rounded-2xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50 hover:shadow-md transition-all group bg-white">
+                            <i class="ph-fill ph-layout text-3xl text-purple-500 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-slate-700 text-lg" data-i18n="ben_3">Halaman Pendaratan Khusus</span>
                         </div>
-                        <div class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-rose-200 hover:bg-rose-50 hover:shadow-sm transition-all group">
-                            <i class="ph-fill ph-check-circle text-2xl text-rose-500 group-hover:scale-110 transition-transform"></i>
-                            <span class="font-bold text-slate-700" data-i18n="ben_4">Warna & Bentuk yang Disesuaikan</span>
+                        <div class="flex items-center gap-5 p-5 rounded-2xl border border-slate-100 hover:border-rose-200 hover:bg-rose-50 hover:shadow-md transition-all group bg-white">
+                            <i class="ph-fill ph-palette text-3xl text-rose-500 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-slate-700 text-lg" data-i18n="ben_4">Warna & Bentuk yang Disesuaikan</span>
                         </div>
-                        <div class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50 hover:shadow-sm transition-all group">
-                            <i class="ph-fill ph-check-circle text-2xl text-amber-500 group-hover:scale-110 transition-transform"></i>
-                            <span class="font-bold text-slate-700" data-i18n="ben_5">Tanpa Perlu Kemampuan Coding</span>
+                        <div class="flex items-center gap-5 p-5 rounded-2xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50 hover:shadow-md transition-all group bg-white">
+                            <i class="ph-fill ph-code text-3xl text-amber-500 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-slate-700 text-lg" data-i18n="ben_5">Tanpa Perlu Kemampuan Coding</span>
                         </div>
                     </div>
                 </div>
@@ -966,14 +984,16 @@
     </section>
 
     <!-- Footer -->
-    <footer class="text-center py-10 border-t border-slate-200 bg-white">
-        <p class="text-sm font-bold text-slate-500 mb-5">Copyright &copy; 2026. <span class="text-slate-800">Scan Plus</span>. Rumah Edukasi Digital.</p>
-        <!-- Social Media Icons -->
-        <div class="flex justify-center gap-6 text-slate-400">
-            <a href="#" class="hover:text-pink-500 transition-colors transform hover:scale-110" title="Instagram"><i class="ph ph-instagram-logo text-3xl"></i></a>
-            <a href="#" class="hover:text-red-500 transition-colors transform hover:scale-110" title="YouTube"><i class="ph ph-youtube-logo text-3xl"></i></a>
-            <a href="#" class="hover:text-black transition-colors transform hover:scale-110" title="TikTok"><i class="ph ph-tiktok-logo text-3xl"></i></a>
-            <a href="#" class="hover:text-blue-600 transition-colors transform hover:scale-110" title="Facebook"><i class="ph ph-facebook-logo text-3xl"></i></a>
+    <footer class="text-center py-12 border-t border-slate-200 bg-white">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col items-center">
+            <!-- Social Media Icons -->
+            <div class="flex justify-center gap-8 text-slate-400 mb-6">
+                <a href="#" class="hover:text-pink-600 transition-colors transform hover:-translate-y-1" title="Instagram"><i class="ph ph-instagram-logo text-3xl"></i></a>
+                <a href="#" class="hover:text-red-600 transition-colors transform hover:-translate-y-1" title="YouTube"><i class="ph ph-youtube-logo text-3xl"></i></a>
+                <a href="#" class="hover:text-slate-900 transition-colors transform hover:-translate-y-1" title="TikTok"><i class="ph ph-tiktok-logo text-3xl"></i></a>
+                <a href="#" class="hover:text-blue-600 transition-colors transform hover:-translate-y-1" title="Facebook"><i class="ph ph-facebook-logo text-3xl"></i></a>
+            </div>
+            <p class="text-sm font-bold text-slate-500">Copyright &copy; 2026. <span class="text-slate-800">Scan Plus</span>. Rumah Edukasi Digital.</p>
         </div>
     </footer>
 
@@ -1003,8 +1023,8 @@
             const i18n = {
                 id: {
                     offline_mode: "Mode Offline Aktif - Aplikasi 100% tetap bisa digunakan.",
-                    app_title: "Scan Plus - Code Generator",
-                    app_subtitle: "Kustomisasi QR Code dengan bingkai, teks, dan logo profesional. Support Bulk 1000+ QR.",
+                    app_title: "Tingkatkan Interaksi dengan QR Code Premium!",
+                    app_subtitle: "Kustomisasi QR Code Anda dengan bingkai, teks, dan logo profesional. Support pembuatan ribuan (Bulk 1000+) QR secara instan dan 100% Offline.",
                     login_title: "Scan Plus Login",
                     login_desc: "Silakan masukkan password untuk mengakses aplikasi.",
                     login_ph: "Masukkan Password",
@@ -1013,14 +1033,14 @@
                     logout: "Keluar",
                     login_err: "Password salah!",
                     pricing_title: "Pilih paket terbaik untuk Anda",
-                    pricing_subtitle: "Anda memiliki pembaruan tanpa batas gratis dan dukungan premium pada paket lengkap.",
+                    pricing_subtitle: "Tingkatkan aplikasi Anda untuk membuka fitur tanpa batas.",
                     pricing_free: "Gratis",
                     pricing_free_desc: "Selamanya bebas",
                     pricing_full: "Premium / Full Version",
                     pricing_pay_once: "Sekali Bayar / Selamanya",
-                    badge_populer: "Paling Populer",
+                    badge_populer: "Rekomendasi",
                     feat_limit1: "Maksimal 10 Kode QR (Mode Bulk)",
-                    feat_limit2: "Tak Terbatas (1 Juta+) Kode QR",
+                    feat_limit2: "Tak Terbatas (Unlimited) Kode QR",
                     feat_res1: "Resolusi Standar (JPG Saja)",
                     feat_res2: "Resolusi Tinggi (HD) & Format Lengkap",
                     feat_logo1: "Bebas Watermark",
@@ -1036,12 +1056,13 @@
                     transfer_bank: "Transfer Bank",
                     or_qris: "Atau via QRIS",
                     buy_note: "Kirim bukti transfer ke WhatsApp admin untuk mendapatkan password Full Version.",
-                    btn_back: "Kembali ke Harga",
+                    btn_back: "Kembali",
                     demo_title: "Versi Demo",
                     demo_desc: "Anda menggunakan versi Demo. Beli Full Version untuk akses fitur tanpa batas!",
                     full_title: "Akses Premium",
                     full_desc: "Anda telah masuk sebagai pengguna Premium. Semua fitur terbuka tanpa batas!",
                     badge_full: "Premium Version",
+                    badge_demo: "Demo Version",
                     step1_tag: "Langkah 1",
                     step1_title: "Pilih Konten",
                     step2_tag: "Langkah 2",
@@ -1067,7 +1088,7 @@
                     color_dot: "Warna Dot",
                     shape_corner: "Pojok QR",
                     lbl_logo: "Custom Logo (Tengah)",
-                    upload_logo: "Upload Logo",
+                    upload_logo: "Upload Logo Maks 2MB",
                     btn_remove: "Hapus",
                     logo_size: "Ukuran Logo",
                     logo_margin: "Jarak Bingkai Logo",
@@ -1076,8 +1097,8 @@
                     dl_desc: "Resolusi Tinggi & Support Google Lens",
                     gallery_title1: "Jelajahi Koleksi Lengkap Kami Dari",
                     gallery_title2: "Bingkai",
-                    gallery_desc: "Buat QR Code Anda menonjol dengan koleksi bingkai gratis kami yang luas. Dengan berbagai opsi opsi, termasuk gaya minimalis hingga desain bentuk lencana (badge), Anda pasti akan menemukan kombinasi yang sempurna.",
-                    benefits_title: "Manfaat dari Scan Plus",
+                    gallery_desc: "Buat QR Code Anda menonjol dengan koleksi bingkai gratis kami yang luas. Dengan berbagai opsi, termasuk gaya minimalis hingga desain bentuk lencana (badge), Anda pasti akan menemukan kombinasi yang sempurna.",
+                    benefits_title: "Manfaat Utama dari Scan Plus",
                     benefits_desc: "Dengan menggunakan Scan Plus, Anda dapat melacak berapa banyak orang yang memindai QR Code Anda, dari mana, dan pada tanggal berapa. Selain itu, Anda dapat membuat Kode QR khusus dengan berbagai desain, warna, dan logo. Tanpa Perlu Coding!",
                     ben_1: "Kode QR Dinamis & Statis",
                     ben_2: "Statistik Kode QR Lengkap",
@@ -1111,8 +1132,8 @@
                 },
                 en: {
                     offline_mode: "Offline Mode Active - App is 100% usable.",
-                    app_title: "Scan Plus - Code Generator",
-                    app_subtitle: "Customize QR Codes with professional frames, text, and logos. Supports Bulk 1000+ QR.",
+                    app_title: "Boost Interaction with Premium QR Codes!",
+                    app_subtitle: "Customize your QR Code with professional frames, texts, and logos. Supports bulk creation (1000+ QR) instantly and 100% Offline.",
                     login_title: "Scan Plus Login",
                     login_desc: "Please enter your password to access the app.",
                     login_ph: "Enter Password",
@@ -1121,14 +1142,14 @@
                     logout: "Logout",
                     login_err: "Incorrect password!",
                     pricing_title: "Choose the best plan for you",
-                    pricing_subtitle: "You have unlimited free updates and premium support on full plans.",
+                    pricing_subtitle: "Upgrade your app to unlock unlimited features.",
                     pricing_free: "Free",
                     pricing_free_desc: "Free forever",
                     pricing_full: "Premium / Full Version",
                     pricing_pay_once: "One-time Payment",
-                    badge_populer: "Most Popular",
+                    badge_populer: "Recommended",
                     feat_limit1: "Maximum 10 QR Codes (Bulk)",
-                    feat_limit2: "Unlimited (1M+) QR Codes",
+                    feat_limit2: "Unlimited QR Codes",
                     feat_res1: "Standard Resolution (JPG Only)",
                     feat_res2: "High Resolution (HD) & Full Formats",
                     feat_logo1: "Watermark Free",
@@ -1144,12 +1165,13 @@
                     transfer_bank: "Bank Transfer",
                     or_qris: "Or via QRIS",
                     buy_note: "Send transfer proof to admin WhatsApp to get the Full Version password.",
-                    btn_back: "Back to Pricing",
+                    btn_back: "Back",
                     demo_title: "Demo Version",
                     demo_desc: "You are using the Demo version. Buy Full Version for unlimited access!",
                     full_title: "Premium Access",
                     full_desc: "You are logged in as a Premium user. All features unlocked!",
                     badge_full: "Premium Version",
+                    badge_demo: "Demo Version",
                     step1_tag: "Step 1",
                     step1_title: "Select Content",
                     step2_tag: "Step 2",
@@ -1175,7 +1197,7 @@
                     color_dot: "Dot Color",
                     shape_corner: "QR Corner",
                     lbl_logo: "Custom Logo (Center)",
-                    upload_logo: "Upload Logo",
+                    upload_logo: "Upload Logo Max 2MB",
                     btn_remove: "Remove",
                     logo_size: "Logo Size",
                     logo_margin: "Logo Frame Margin",
@@ -1185,7 +1207,7 @@
                     gallery_title1: "Explore Our Complete Collection Of",
                     gallery_title2: "QR Code Frames",
                     gallery_desc: "Make your QR Code stand out with our wide collection of free frames. With a variety of options, from minimalist styles to badge designs, you're sure to find the perfect combination.",
-                    benefits_title: "Benefits from Scan Plus",
+                    benefits_title: "Main Benefits of Scan Plus",
                     benefits_desc: "By using Scan Plus, you will be able to keep track of how many people scan your QR Codes, from where and on what date. Also, you can create fully customized QR codes with different designs. No Coding Required!",
                     ben_1: "Dynamic & Static QR Codes",
                     ben_2: "Complete QR Code Statistics",
@@ -1219,8 +1241,8 @@
                 },
                 zh: {
                     offline_mode: "离线模式已激活 - 应用程序 100% 可用。",
-                    app_title: "Scan Plus - 二维码生成器",
-                    app_subtitle: "使用专业的相框、文本和徽标自定义二维码。 支持批量 1000+ 二维码。",
+                    app_title: "使用高级二维码提升互动！",
+                    app_subtitle: "使用专业的相框、文本和徽标自定义您的二维码。支持即时批量创建 (1000+ QR) 并100%离线。",
                     login_title: "Scan Plus 登录",
                     login_desc: "请输入您的密码以访问该应用程序。",
                     login_ph: "输入密码",
@@ -1229,14 +1251,14 @@
                     logout: "登出",
                     login_err: "密码错误！",
                     pricing_title: "选择最适合您的方案",
-                    pricing_subtitle: "高级套餐提供无限制的免费更新和优先支持。",
+                    pricing_subtitle: "升级您的应用以解锁无限功能。",
                     pricing_free: "免费",
                     pricing_free_desc: "永久免费",
                     pricing_full: "高级 / 完整版",
                     pricing_pay_once: "一次性付款",
-                    badge_populer: "最受欢迎",
+                    badge_populer: "推荐的",
                     feat_limit1: "最多 10 个二维码 (批量)",
-                    feat_limit2: "无限制 (100万+) 二维码",
+                    feat_limit2: "无限制二维码",
                     feat_res1: "标准分辨率 (仅 JPG)",
                     feat_res2: "高分辨率 (HD) & 全格式",
                     feat_logo1: "无水印",
@@ -1252,12 +1274,13 @@
                     transfer_bank: "银行转账",
                     or_qris: "或通过 QRIS",
                     buy_note: "将转账证明发送至管理员 WhatsApp 以获取完整版密码。",
-                    btn_back: "返回定价",
+                    btn_back: "返回",
                     demo_title: "演示版本",
                     demo_desc: "您使用的是演示版本。 购买完整版以获得无限制的访问权限！",
                     full_title: "高级访问权限",
                     full_desc: "您已作为高级用户登录。 所有功能已解锁！",
                     badge_full: "高级版本",
+                    badge_demo: "演示版本",
                     step1_tag: "步骤 1",
                     step1_title: "选择内容",
                     step2_tag: "步骤 2",
@@ -1283,7 +1306,7 @@
                     color_dot: "点颜色",
                     shape_corner: "二维码角",
                     lbl_logo: "自定义徽标 (中心)",
-                    upload_logo: "上传徽标",
+                    upload_logo: "上传徽标 最多 2MB",
                     btn_remove: "移除",
                     logo_size: "徽标尺寸",
                     logo_margin: "徽标边距",
@@ -1293,7 +1316,7 @@
                     gallery_title1: "探索我们完整的",
                     gallery_title2: "二维码相框系列",
                     gallery_desc: "使用我们丰富的免费相框系列让您的二维码脱颖而出。提供多种选项，从极简风格到徽章设计，您一定会找到完美的组合。",
-                    benefits_title: "Scan Plus 的优势",
+                    benefits_title: "Scan Plus 的主要优势",
                     benefits_desc: "使用 Scan Plus，您可以追踪多少人扫描了您的二维码，来自哪里以及在什么日期。 此外，您可以创建完全定制设计的二维码。 无需编码！",
                     ben_1: "动态与静态二维码",
                     ben_2: "完整的二维码统计",
@@ -1349,7 +1372,6 @@
                     document.querySelector('#download-btn-text [data-i18n]').innerText = dict['btn_dl'];
                 }
 
-                // Update Demo badge specific text dynamically with days left
                 const savedAuth = JSON.parse(localStorage.getItem('scanPlusAuth') || '{}');
                 if (savedAuth.type === 'demo') {
                     const now = new Date().getTime();
@@ -1358,6 +1380,8 @@
                                      (lang === 'zh') ? `演示版本 (剩余 ${daysLeft} 天)` : 
                                      `Versi Demo (${daysLeft} Hari Tersisa)`;
                     document.getElementById('auth-status-badge').innerText = badgeStr;
+                } else if (savedAuth.type === 'full') {
+                    document.getElementById('auth-status-badge').innerText = dict['badge_full'];
                 }
             }
 
@@ -1389,18 +1413,18 @@
                 const toastDesc = document.getElementById('toast-desc');
                 
                 if (type === 'full') {
-                    toastIcon.className = "ph ph-check-circle text-emerald-500 text-2xl mt-0.5";
+                    toastIcon.className = "ph ph-check-circle text-emerald-500 text-3xl mt-0.5";
                     toastNotif.classList.replace('border-amber-500', 'border-emerald-500');
                     toastTitle.setAttribute('data-i18n', 'full_title');
                     toastDesc.setAttribute('data-i18n', 'full_desc');
                 } else {
-                    toastIcon.className = "ph ph-info text-amber-500 text-2xl mt-0.5";
+                    toastIcon.className = "ph ph-info text-amber-500 text-3xl mt-0.5";
                     toastNotif.classList.replace('border-emerald-500', 'border-amber-500');
                     toastTitle.setAttribute('data-i18n', 'demo_title');
                     toastDesc.setAttribute('data-i18n', 'demo_desc');
                 }
                 
-                changeLanguage(langSelector.value); // Re-apply text dynamically
+                changeLanguage(langSelector.value); 
                 
                 toastNotif.classList.remove('hidden');
                 toastNotif.classList.add('animate-toast');
@@ -1445,7 +1469,7 @@
                     
                     authStatusBadge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'border-emerald-200');
                     authStatusBadge.classList.add('bg-amber-100', 'text-amber-800', 'border-amber-200');
-                    authStatusBadge.removeAttribute('data-i18n'); // Because we use dynamic days
+                    authStatusBadge.removeAttribute('data-i18n'); 
                     
                     topActions.classList.remove('hidden');
                     document.getElementById('btn-top-buy').classList.remove('hidden');
@@ -1477,7 +1501,7 @@
                     document.getElementById('scanner-btn-container').classList.add('hidden');
                 }
                 
-                changeLanguage(langSelector.value); // Sync texts
+                changeLanguage(langSelector.value); 
             }
 
             btnLogin.addEventListener('click', () => {
@@ -1530,7 +1554,7 @@
             document.getElementById('btn-toggle-password').addEventListener('click', () => {
                 const type = appPassword.getAttribute('type') === 'password' ? 'text' : 'password';
                 appPassword.setAttribute('type', type);
-                document.getElementById('icon-toggle-password').className = type === 'password' ? 'ph ph-eye text-xl' : 'ph ph-eye-slash text-xl';
+                document.getElementById('icon-toggle-password').className = type === 'password' ? 'ph ph-eye text-2xl' : 'ph ph-eye-slash text-2xl';
             });
             
             // SCROLL TO TOP LOGIC
@@ -1807,16 +1831,49 @@
                     return lines[0] || " ";
                 } 
                 switch(currentType) {
-                    case 'link': dataText = document.getElementById('input-link').value; break;
-                    case 'text': dataText = document.getElementById('input-text').value; break;
+                    case 'link': 
+                        dataText = document.getElementById('input-link').value; 
+                        break;
+                    case 'text': 
+                        dataText = document.getElementById('input-text').value; 
+                        break;
                     case 'email':
                         const em = document.getElementById('input-email-to').value;
                         const sub = document.getElementById('input-email-sub').value;
-                        dataText = em ? `mailto:${em}?subject=${encodeURIComponent(sub)}` : " ";
+                        const msgEmail = document.getElementById('input-email-msg').value;
+                        dataText = em ? `mailto:${em}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(msgEmail)}` : " ";
                         break;
-                    case 'call': dataText = `tel:${document.getElementById('input-call').value}`; break;
-                    case 'generic': dataText = document.getElementById('input-generic').value; break;
-                    default: dataText = "https://google.com";
+                    case 'call': 
+                        dataText = `tel:${document.getElementById('input-call').value}`; 
+                        break;
+                    case 'sms': 
+                        const smsPhone = document.getElementById('input-sms-phone').value;
+                        const smsMsg = document.getElementById('input-sms-msg').value;
+                        dataText = smsPhone ? `SMSTO:${smsPhone}:${smsMsg}` : " ";
+                        break;
+                    case 'whatsapp': 
+                        const waNum = document.getElementById('input-wa-phone').value.replace(/[^0-9]/g, '');
+                        const waMsg = document.getElementById('input-wa-msg').value;
+                        dataText = waNum ? `https://wa.me/${waNum}?text=${encodeURIComponent(waMsg)}` : " "; 
+                        break;
+                    case 'vcard':
+                        const fn = document.getElementById('input-vc-name').value;
+                        const org = document.getElementById('input-vc-org').value;
+                        const tel = document.getElementById('input-vc-tel').value;
+                        const vcEmail = document.getElementById('input-vc-email').value;
+                        dataText = `BEGIN:VCARD\nVERSION:3.0\nFN:${fn}\nORG:${org}\nTEL:${tel}\nEMAIL:${vcEmail}\nEND:VCARD`;
+                        break;
+                    case 'wifi':
+                        const ssid = document.getElementById('input-wifi-ssid').value;
+                        const pw = document.getElementById('input-wifi-pw').value;
+                        const enc = document.getElementById('input-wifi-enc').value;
+                        dataText = ssid ? `WIFI:T:${enc};S:${ssid};P:${pw};;` : " ";
+                        break;
+                    case 'generic': 
+                        dataText = document.getElementById('input-generic').value; 
+                        break;
+                    default: 
+                        dataText = "https://google.com";
                 }
                 return dataText.trim() || " ";
             }
@@ -1829,11 +1886,11 @@
                 if (mode === 'single') {
                     document.getElementById('tab-single').classList.replace('bg-slate-100', 'bg-white');
                     document.getElementById('tab-single').classList.replace('text-slate-500', 'text-emerald-600');
-                    document.getElementById('tab-single').classList.add('shadow');
+                    document.getElementById('tab-single').classList.add('shadow-md');
                     
                     document.getElementById('tab-bulk').classList.replace('bg-white', 'bg-transparent');
                     document.getElementById('tab-bulk').classList.replace('text-emerald-600', 'text-slate-500');
-                    document.getElementById('tab-bulk').classList.remove('shadow');
+                    document.getElementById('tab-bulk').classList.remove('shadow-md');
 
                     document.getElementById('single-mode-container').classList.remove('hidden');
                     document.getElementById('bulk-mode-container').classList.add('hidden');
@@ -1843,11 +1900,11 @@
                 } else {
                     document.getElementById('tab-bulk').classList.replace('bg-transparent', 'bg-white');
                     document.getElementById('tab-bulk').classList.replace('text-slate-500', 'text-emerald-600');
-                    document.getElementById('tab-bulk').classList.add('shadow');
+                    document.getElementById('tab-bulk').classList.add('shadow-md');
                     
                     document.getElementById('tab-single').classList.replace('bg-white', 'bg-transparent');
                     document.getElementById('tab-single').classList.replace('text-emerald-600', 'text-slate-500');
-                    document.getElementById('tab-single').classList.remove('shadow');
+                    document.getElementById('tab-single').classList.remove('shadow-md');
 
                     document.getElementById('single-mode-container').classList.add('hidden');
                     document.getElementById('bulk-mode-container').classList.remove('hidden');
